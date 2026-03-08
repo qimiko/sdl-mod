@@ -3,6 +3,8 @@
 #include <Geode/Geode.hpp>
 #include <Geode/utils/Keyboard.hpp>
 #include <Geode/modify/PlatformToolbox.hpp>
+#include <Geode/modify/CCTextFieldTTF.hpp>
+#include <Geode/modify/CCEGLView.hpp>
 
 using namespace geode::prelude;
 
@@ -419,9 +421,17 @@ void on_key_event(SDL_KeyboardEvent& event) {
 			for (auto ch : str) {
 				imeDispatcher->dispatchInsertText(&ch, 1, keyCode);
 			}
+		} else if (keyCode == KEY_Escape) {
+			auto window = SDLManager::get().m_window;
+			if (SDL_TextInputActive(window)) {
+				SDL_StopTextInput(window);
+			}
 		} else {
+			auto isArrowKey = keyCode == KEY_Left || keyCode == KEY_Right;
+			if (isArrowKey || !SDL_TextInputActive(SDLManager::get().m_window)) {
 				char ch = rawKeycode;
 				imeDispatcher->dispatchInsertText(&ch, 1, keyCode);
+			}
 		}
 	});
 }
@@ -660,6 +670,19 @@ SDL_AppResult SDLCALL my_event_callback(void *appstate, SDL_Event *event) {
 			}
 			break;
 		}
+		case SDL_EVENT_TEXT_INPUT: {
+			auto imeDispatcher = CCIMEDispatcher::sharedDispatcher();
+			for (auto c : std::string_view{event->text.text}) {
+				auto ch = c;
+				imeDispatcher->dispatchInsertText(&ch, 1, KEY_Unknown);
+			}
+			break;
+		}
+		/*
+		case SDL_EVENT_TEXT_EDITING:
+			geode::log::info("SDL_EVENT_TEXT_EDITING: {} {} {}", event->edit.text, event->edit.start, event->edit.length);
+			break;
+		*/
 		// knowingly ignoring these events
 		/*
 		case SDL_EVENT_WINDOW_SHOWN:
@@ -698,3 +721,49 @@ struct $modify(PlatformToolbox) {
 		SDL_HideCursor();
 	}
 };
+
+SDL_Rect s_imeCandidate{};
+bool s_hasIMECandidate = false;
+
+/*
+struct $modify(cocos2d::CCTextFieldTTF) {
+	bool attachWithIME() {
+		if (this->getParent()) {
+			auto worldPos = this->getParent()->convertToWorldSpace(this->getPosition());
+
+			s_hasIMECandidate = true;
+			s_imeCandidate = SDL_Rect {
+				static_cast<int>(worldPos.x),
+				static_cast<int>(worldPos.y),
+				static_cast<int>(this->getScaledContentWidth()),
+				static_cast<int>(this->getScaledContentHeight())
+			};
+		}
+
+		return CCTextFieldTTF::attachWithIME();
+	}
+
+	bool detachWithIME() {
+		s_hasIMECandidate = false;
+
+		return CCTextFieldTTF::detachWithIME();
+	}
+};
+*/
+
+struct $modify(cocos2d::CCEGLView) {
+	void setIMEKeyboardState(bool activated) override {
+		CCEGLView::setIMEKeyboardState(activated);
+
+		auto window = SDLManager::get().m_window;
+		if (activated) {
+			if (s_hasIMECandidate) {
+				SDL_SetTextInputArea(window, &s_imeCandidate, 0);
+			}
+			SDL_StartTextInput(window);
+		} else {
+			SDL_StopTextInput(window);
+		}
+	}
+};
+

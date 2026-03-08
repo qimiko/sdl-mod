@@ -39,5 +39,11 @@
 			"description": "Geometry dsash",
 			"default": "Geometry Dash*"
 		}
+	},
+	"incompatibilities": {
+		"zmx.sdl-mod": {
+			"version": "*",
+			"breaking": true
+		}
 	}
 }
