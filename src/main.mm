@@ -30,6 +30,9 @@ void update_display_scale() {
 	auto display_scale = SDL_GetWindowDisplayScale(SDLManager::get().m_window);
 	geode::log::debug("update_display_scale: {}", display_scale);
 
+	// with display scale, we have the choice of either scaling inputs, or everything in cocos
+	// we chose inputs, but the other solution works just fine (basically no changes to end-user)
+
 	SDLManager::get().m_displayScale = display_scale;
 	// [[MetalGLView sharedEGLView] setBackingFactor:display_scale];
 }
@@ -80,6 +83,7 @@ void fix_relative_timer() {
 }
 
 void fix_menu_items() {
+	// redirect quit to sdl to prevent crash
 	auto mainMenu = [NSApp mainMenu];
 	auto appMenu = [[mainMenu itemAtIndex:0] submenu];
 
@@ -232,13 +236,13 @@ MetalCCDirectorCaller* c_sharedDirectorCaller() {
 }
 
 $execute {
-		#if GEODE_COMP_GD_VERSION == 22081
-			#if defined(GEODE_IS_ARM_MAC)
-				auto applicationDidFinishLaunchingAddr = 0x6914;
-			#elif defined(GEODE_IS_INTEL_MAC)
-				auto applicationDidFinishLaunchingAddr = 0x7470;
-			#endif
-    #endif
+	#if GEODE_COMP_GD_VERSION == 22081
+		#if defined(GEODE_IS_ARM_MAC)
+			auto applicationDidFinishLaunchingAddr = 0x6914;
+		#elif defined(GEODE_IS_INTEL_MAC)
+			auto applicationDidFinishLaunchingAddr = 0x7470;
+		#endif
+	#endif
 
 	{
 		// geode replaces the implementation so we have to hook it by address !! yay
