@@ -1,0 +1,37 @@
+#pragma once
+
+#include <Geode/Geode.hpp>
+
+// some of these aren't in bindings
+#if GEODE_COMP_GD_VERSION == 22081
+	#if defined(GEODE_IS_ARM_MAC)
+		auto AppController_applicationDidFinishLaunching_addr = 0x6914;
+
+		// these names aren't official. i'm too lazy to find the official ones
+		auto SteamManager_sharedState_addr = 0x52d2cc; // used in applicationDidFinishLaunching
+		auto SteamManager_checkSteamAPI_addr = 0x52d51c;
+
+		auto SteamAPI_Shutdown_addr = 0x6d1634; // call stub, used in gameDidSave
+	#elif defined(GEODE_IS_INTEL_MAC)
+		auto AppController_applicationDidFinishLaunching_addr = 0x7470;
+
+		auto SteamManager_sharedState_addr = 0x606910;
+		auto SteamManager_checkSteamAPI_addr = 0x606b70;
+
+		auto SteamAPI_Shutdown_addr = 0x7cf0de;
+	#endif
+#endif
+
+struct SteamManager : public cocos2d::CCNode {
+	static SteamManager* sharedState() {
+		return reinterpret_cast<SteamManager*(*)()>(geode::base::get() + SteamManager_sharedState_addr)();
+	}
+
+	bool checkSteamAPI() {
+		return reinterpret_cast<bool(*)(SteamManager*)>(geode::base::get() + SteamManager_checkSteamAPI_addr)(this);
+	}
+};
+
+void SteamAPI_Shutdown() {
+	reinterpret_cast<void(*)()>(geode::base::get() + SteamAPI_Shutdown_addr)();
+}

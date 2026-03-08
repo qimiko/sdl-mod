@@ -2,6 +2,7 @@
 
 #include "base.h"
 #include "objc.h"
+#include "bind.h"
 
 #define ENABLE_VKMOD 0
 
@@ -99,8 +100,30 @@ void fix_menu_items() {
 	}
 }
 
+bool setup_steam_manager() {
+	// having steam api gives us some nice benefits (achievements, steam input) so enable it if we can
+	if (SteamManager::sharedState()->checkSteamAPI()) {
+		return true;
+	}
+
+	if (geode::Loader::get()->isModLoaded("prevter.vapor")) {
+		return true;
+	}
+
+	geode::log::error("failed to setup SteamManager!");
+	return false;
+}
+
 SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) {
-	SDL_SetAppMetadata("Geometry Dash", "2.2081", "com.robtop.geometrydashmac");
+	if (!setup_steam_manager()) {
+		return SDL_APP_FAILURE;
+	}
+
+	SDL_SetAppMetadata(
+		"Geometry Dash",
+		geode::Loader::get()->getGameVersion().c_str(),
+		"com.robtop.geometrydashmac"
+	);
 
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
 		geode::log::warn("failed to initialize SDL: {}", SDL_GetError());
@@ -236,18 +259,10 @@ MetalCCDirectorCaller* c_sharedDirectorCaller() {
 }
 
 $execute {
-	#if GEODE_COMP_GD_VERSION == 22081
-		#if defined(GEODE_IS_ARM_MAC)
-			auto applicationDidFinishLaunchingAddr = 0x6914;
-		#elif defined(GEODE_IS_INTEL_MAC)
-			auto applicationDidFinishLaunchingAddr = 0x7470;
-		#endif
-	#endif
-
 	{
 		// geode replaces the implementation so we have to hook it by address !! yay
 		auto h = geode::Mod::get()->hook(
-			reinterpret_cast<void*>(geode::base::get() + applicationDidFinishLaunchingAddr),
+			reinterpret_cast<void*>(geode::base::get() + AppController_applicationDidFinishLaunching_addr),
 			&applicationDidFinishLaunching,
 			"[AppController applicationDidFinishLaunching:]",
 			tulip::hook::TulipConvention::Default
@@ -303,4 +318,9 @@ $execute {
 	geode::listenForSettingChanges<std::string>("window-title", [](std::string value) {
 		SDL_SetWindowTitle(SDLManager::get().m_window, value.c_str());
 	});
+
+	geode::GameEvent(geode::GameEventType::Exiting).listen([] {
+		geode::log::info("Closing Steam API");
+		SteamAPI_Shutdown();
+	}).leak();
 }
