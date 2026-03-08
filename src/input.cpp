@@ -437,7 +437,9 @@ void on_key_event(SDL_KeyboardEvent& event) {
 }
 
 void on_wheel_event(SDL_MouseWheelEvent& event) {
-	auto flip_wheel = event.direction == SDL_MOUSEWHEEL_FLIPPED;
+	// auto flip_wheel = event.direction == SDL_MOUSEWHEEL_FLIPPED;
+	// based on user feedback, we should not account for the user's scroll setting
+	auto flip_wheel = true;
 
 	float x = flip_wheel ? -event.x : event.x;
 	float y = flip_wheel ? -event.y : event.y;
