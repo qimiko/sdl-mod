@@ -17,6 +17,12 @@ set(SOURCES
 )
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
+set_source_files_properties(
+    src/main.mm
+    src/objc.mm
+    PROPERTIES SKIP_PRECOMPILE_HEADERS ON
+)
+
 if (NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")
 else()
