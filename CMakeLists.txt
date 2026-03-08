@@ -8,6 +8,8 @@ else()
 endif()
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+
 project(sdl-mod VERSION 1.0.0)
 
 set(SOURCES
