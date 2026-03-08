@@ -1,0 +1,43 @@
+{
+	"geode": "5.3.0",
+	"gd": {
+		"mac": "2.2081"
+	},
+	"id": "zmx.sdl-mod",
+	"name": "SDL Mod",
+	"version": "v1.0.0",
+	"developer": "zmx",
+	"description": "evil mod that makes your game sdl",
+	"early-load": true,
+	"tags": ["interface", "bugfix", "utility", "enhancement", "universal", "performance", "offline", "cheat"],
+	"links": {
+		"source": "https://github.com/qimiko/sdl-mod"
+	},
+	"settings": {
+		"disable-vsync": {
+			"type": "bool",
+			"name": "Disable VSync",
+			"description": "Removes the framerate cap.",
+			"default": false
+		},
+		"exclusive-fullscreen": {
+			"type": "bool",
+			"name": "Exclusive Fullscreen",
+			"description": "Causes fullscreen mode to <cg>exclusively use</c> the display, allowing for it to <cs>draw underneath</c> display cutouts.\n\nExclusive fullscreen <cr>acts strangely</c> on macOS (and Geometry Dash does not properly support display cutouts), so it is <co>not recommended</c> to enable this unless you are <cd>prepared</c>.",
+			"default": false
+		},
+		"disable-high-dpi": {
+			"type": "bool",
+			"name": "Disable High DPI Mode",
+			"description": "Disables <cp>High DPI</c> mode on <cl>Retina displays</c>, meaning the game will run at a <cr>lower resolution</c> that is then upscaled to fit the display (typically <cy>2x scale</c>). Enabling may <cg>improve performance</c> on GPU heavy levels, as well as <cj>improve scaling</c> on some overlay mods.",
+			"default": false,
+			"requires-restart": true
+		},
+		"window-title": {
+			"type": "string",
+			"name": "Window Title",
+			"description": "Geometry dsash",
+			"default": "Geometry Dash*"
+		}
+	}
+}
