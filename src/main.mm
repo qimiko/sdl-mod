@@ -52,10 +52,21 @@ void toggle_vsync(bool disabled) {
 	}
 }
 
-void toggle_exclusive_fullscreen(bool enabled) {
+void check_exclusive_fullscreen() {
+	auto exclusive_fullscreen = geode::Mod::get()->getSettingValue<bool>("exclusive-fullscreen");
+	toggle_exclusive_fullscreen(exclusive_fullscreen, true);
+}
+
+void toggle_exclusive_fullscreen(bool enabled, bool force) {
 	auto window = SDLManager::get().m_window;
 	if (!enabled) {
 		SDL_SetWindowFullscreenMode(window, nullptr);
+		return;
+	}
+
+	auto window_flags = SDL_GetWindowFlags(window);
+	if (!force && (window_flags & SDL_WINDOW_FULLSCREEN) != SDL_WINDOW_FULLSCREEN) {
+		// wait until we're going into fullscreen to apply this
 		return;
 	}
 
@@ -193,7 +204,7 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 #endif
 
 	auto exclusive_fullscreen = geode::Mod::get()->getSettingValue<bool>("exclusive-fullscreen");
-	toggle_exclusive_fullscreen(exclusive_fullscreen);
+	toggle_exclusive_fullscreen(exclusive_fullscreen, false);
 
 	update_display_scale();
 
@@ -312,7 +323,7 @@ $execute {
 	});
 
 	geode::listenForSettingChanges<bool>("exclusive-fullscreen", [](bool enabled) {
-		toggle_exclusive_fullscreen(enabled);
+		toggle_exclusive_fullscreen(enabled, false);
 	});
 
 	geode::listenForSettingChanges<std::string>("window-title", [](std::string value) {

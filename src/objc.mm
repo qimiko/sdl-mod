@@ -32,11 +32,15 @@ static id s_sharedAppController;
 
 -(void) toggleFullScreenOn {
 	auto window = SDLManager::get().m_window;
+
+	check_exclusive_fullscreen();
 	SDL_SetWindowFullscreen(window, true);
 }
 
 -(void) toggleFullScreenOff {
 	auto window = SDLManager::get().m_window;
+
+	toggle_exclusive_fullscreen(false, true);
 	SDL_SetWindowFullscreen(window, false);
 }
 

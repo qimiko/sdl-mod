@@ -25,3 +25,5 @@ public:
 void trigger_shutdown();
 void update_display_scale();
 void resize_window(int w, int h);
+void toggle_exclusive_fullscreen(bool enabled, bool force);
+void check_exclusive_fullscreen();

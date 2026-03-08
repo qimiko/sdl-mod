@@ -9,16 +9,16 @@ using namespace geode::prelude;
 KeyboardModifier modifiers_from_keymod(SDL_Keymod flags) {
 	KeyboardModifier modifiers = KeyboardModifier::None;
 
-	if ((flags & SDL_KMOD_SHIFT) != 0) {
+	if ((flags & SDL_KMOD_SHIFT) == SDL_KMOD_SHIFT) {
 		modifiers |= KeyboardModifier::Shift;
 	}
-	if ((flags & SDL_KMOD_CTRL) != 0) {
+	if ((flags & SDL_KMOD_CTRL) == SDL_KMOD_CTRL) {
 		modifiers |= KeyboardModifier::Control;
 	}
-	if ((flags & SDL_KMOD_ALT) != 0) {
+	if ((flags & SDL_KMOD_ALT) == SDL_KMOD_ALT) {
 		modifiers |= KeyboardModifier::Alt;
 	}
-	if ((flags & SDL_KMOD_GUI) != 0) {
+	if ((flags & SDL_KMOD_GUI) == SDL_KMOD_GUI) {
 		modifiers |= KeyboardModifier::Super;
 	}
 
@@ -645,12 +645,21 @@ SDL_AppResult SDLCALL my_event_callback(void *appstate, SDL_Event *event) {
 		case SDL_EVENT_MOUSE_WHEEL:
 			on_wheel_event(event->wheel);
 			break;
-		case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
-			GameManager::sharedState()->setGameVariable(GameVar::WindowedMode, false);
+		case SDL_EVENT_WINDOW_ENTER_FULLSCREEN: {
+			// with exclusive fullscreen, zoom status should be untied from exclusive status
+			auto exclusive_fullscreen = geode::Mod::get()->getSettingValue<bool>("exclusive-fullscreen");
+			if (!exclusive_fullscreen) {
+				GameManager::sharedState()->setGameVariable(GameVar::WindowedMode, false);
+			}
 			break;
-    case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
-			GameManager::sharedState()->setGameVariable(GameVar::WindowedMode, true);
+		}
+    case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN: {
+			auto exclusive_fullscreen = geode::Mod::get()->getSettingValue<bool>("exclusive-fullscreen");
+			if (!exclusive_fullscreen) {
+				GameManager::sharedState()->setGameVariable(GameVar::WindowedMode, true);
+			}
 			break;
+		}
 		// knowingly ignoring these events
 		/*
 		case SDL_EVENT_WINDOW_SHOWN:
