@@ -9,7 +9,7 @@
 	"developer": "zmx",
 	"description": "evil mod that makes your game sdl",
 	"early-load": true,
-	"tags": ["interface", "bugfix", "utility", "enhancement", "universal", "performance", "offline", "cheat"],
+	"tags": ["interface", "bugfix", "utility", "enhancement", "universal", "performance", "offline"],
 	"links": {
 		"source": "https://github.com/qimiko/sdl-mod"
 	},
@@ -38,6 +38,13 @@
 			"name": "Window Title",
 			"description": "Geometry dsash",
 			"default": "Geometry Dash*"
+		},
+		"p3-color-space": {
+			"type": "bool",
+			"name": "Revert Color Space",
+			"description": "Resets the <cd>color space</c> used on <cs>HDR displays</c> to the <cl>vanilla</c> setting, **Display P3**. This color space appears <cg>more vivid</c>, but is <cr>inaccurate</c> to the real colors.\n\nRealistically, <co>neither</c> option is perfectly accurate due to how these displays work.",
+			"default": false,
+			"requires-restart": true
 		}
 	},
 	"incompatibilities": {

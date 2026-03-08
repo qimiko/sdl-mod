@@ -20,6 +20,13 @@ void trigger_shutdown() {
 	[[AppController2 sharedAppController] shutdownGame];
 }
 
+void fix_color_space() {
+	auto props = SDL_GetWindowProperties(SDLManager::get().m_window);
+	if (auto nsWindow = reinterpret_cast<NSWindow*>(SDL_GetPointerProperty(props, SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, nullptr))) {
+		[nsWindow setColorSpace:[NSColorSpace displayP3ColorSpace]];
+	}
+}
+
 void resize_window(int w, int h) {
 	cocos2d::CCEGLView::sharedOpenGLView()->setFrameSize(w, h);
 	cocos2d::CCDirector::sharedDirector()->updateScreenScale({static_cast<float>(w), static_cast<float>(h)});
@@ -181,6 +188,10 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 
 	fix_menu_items();
 	fix_relative_timer();
+
+	if (geode::Mod::get()->getSettingValue<bool>("p3-color-space")) {
+		fix_color_space();
+	}
 
 	*appstate = reinterpret_cast<void*>(&SDLManager::get());
 
