@@ -113,7 +113,7 @@ void fix_menu_items() {
 
 bool setup_steam_manager() {
 	// having steam api gives us some nice benefits (achievements, steam input) so enable it if we can
-	if (SteamManager::sharedState()->checkSteamAPI()) {
+	if (SteamManager::sharedState()->setupSteam()) {
 		return true;
 	}
 
