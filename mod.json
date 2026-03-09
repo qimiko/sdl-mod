@@ -14,11 +14,33 @@
 		"source": "https://github.com/qimiko/sdl-mod"
 	},
 	"settings": {
+		"category-performance": {
+			"type": "title",
+			"name": "Performance"
+		},
 		"disable-vsync": {
 			"type": "bool",
 			"name": "Disable VSync",
-			"description": "Removes the framerate cap.",
+			"description": "Allows for <cj>manual control</c> of frame timing.",
 			"default": false
+		},
+		"uncap-framerate": {
+			"type": "bool",
+			"name": "Disable Framerate Cap",
+			"description": "Removes the <cl>framerate cap</c>. This has a <co>significant</c> performance cost!",
+			"default": false,
+			"enable-if": "disable-vsync"
+		},
+		"framerate-limit": {
+			"type": "int",
+			"name": "Target Framerate",
+			"min": 10,
+			"default": 60,
+			"enable-if": "disable-vsync && !uncap-framerate"
+		},
+		"category-visual": {
+			"type": "title",
+			"name": "Visual"
 		},
 		"exclusive-fullscreen": {
 			"type": "bool",
@@ -42,7 +64,7 @@
 		"p3-color-space": {
 			"type": "bool",
 			"name": "Revert Color Space",
-			"description": "Resets the <cd>color space</c> used on <cs>HDR displays</c> to the <cl>vanilla</c> setting, **Display P3**. This color space appears <cg>more vivid</c>, but is <cr>inaccurate</c> to the real colors.\n\nRealistically, <co>neither</c> option is perfectly accurate due to how these displays work.",
+			"description": "Resets the <cd>color space</c> used on <cs>HDR displays</c> to the <cl>vanilla</c> setting, **Display P3**. This color space appears <cg>more vivid</c>, but is <cr>inaccurate</c> to the real colors.\n\nRealistically, <co>neither</c> option is <cp>perfectly accurate</c> due to how these displays work.",
 			"default": false,
 			"requires-restart": true
 		}

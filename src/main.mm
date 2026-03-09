@@ -46,11 +46,18 @@ void update_display_scale() {
 }
 
 void toggle_vsync(bool disabled) {
+	SDLManager::get().m_vsyncEnabled = !disabled;
+
 	if (disabled) {
+		auto str = geode::utils::numToString(SDLManager::get().m_targetFramerate);
+		SDL_SetHint(SDL_HINT_MAIN_CALLBACK_RATE, str.c_str());
+
 		if (!SDL_GL_SetSwapInterval(0)) {
 			geode::log::warn("Failed to disable vertical sync: {}", SDL_GetError());
 		}
 	} else {
+		SDL_SetHint(SDL_HINT_MAIN_CALLBACK_RATE, "0");
+
 		if (!SDL_GL_SetSwapInterval(-1)) {
 			if (!SDL_GL_SetSwapInterval(1)) {
 				geode::log::warn("Failed to enable vertical sync: {}", SDL_GetError());
@@ -209,10 +216,25 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 	auto version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
 
 	geode::log::debug("gl information: {} ({}) - {}", renderer, vendor, version);
+#endif
 
 	auto disable_swap = geode::Mod::get()->getSettingValue<bool>("disable-vsync");
+
+#if !ENABLE_VKMOD
 	toggle_vsync(disable_swap);
 #endif
+
+	auto uncapFramerate = geode::Mod::get()->getSettingValue<bool>("uncap-framerate");
+	auto targetFramerate = uncapFramerate
+		? 0
+		: geode::Mod::get()->getSettingValue<int>("framerate-limit");
+
+	SDLManager::get().m_targetFramerate = targetFramerate;
+
+	if (disable_swap) {
+		auto str = geode::utils::numToString(targetFramerate);
+		SDL_SetHint(SDL_HINT_MAIN_CALLBACK_RATE, str.c_str());
+	}
 
 	auto exclusive_fullscreen = geode::Mod::get()->getSettingValue<bool>("exclusive-fullscreen");
 	toggle_exclusive_fullscreen(exclusive_fullscreen, false);
@@ -238,12 +260,14 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 	return SDL_APP_CONTINUE;
 }
 
-SDL_AppResult SDLCALL my_iterate_callback(void *appstate) {
+SDL_AppResult SDLCALL my_iterate_callback(void* appstate) {
+	auto appManager = reinterpret_cast<SDLManager*>(appstate);
+
 	reinterpret_cast<cocos2d::CCDisplayLinkDirector*>(cocos2d::CCDirector::sharedDirector())
 		->mainLoop();
 
 #if !ENABLE_VKMOD
-	SDL_GL_SwapWindow(reinterpret_cast<SDLManager*>(appstate)->m_window);
+	SDL_GL_SwapWindow(appManager->m_window);
 #endif
 
 	return SDL_APP_CONTINUE;
@@ -331,6 +355,27 @@ $execute {
 
 	geode::listenForSettingChanges<bool>("disable-vsync", [](bool disable_swap) {
 		toggle_vsync(disable_swap);
+	});
+
+	geode::listenForSettingChanges<bool>("uncap-framerate", [](bool uncap_framerate) {
+		auto target_framerate = uncap_framerate
+			? 0
+			: geode::Mod::get()->getSettingValue<int>("framerate-limit");
+		SDLManager::get().m_targetFramerate = target_framerate;
+
+		if (!SDLManager::get().m_vsyncEnabled) {
+			auto str = geode::utils::numToString(target_framerate);
+			SDL_SetHint(SDL_HINT_MAIN_CALLBACK_RATE, str.c_str());
+		}
+	});
+
+	geode::listenForSettingChanges<int>("framerate-limit", [](int frame_limit) {
+		SDLManager::get().m_targetFramerate = frame_limit;
+
+		if (!SDLManager::get().m_vsyncEnabled) {
+			auto str = geode::utils::numToString(frame_limit);
+			SDL_SetHint(SDL_HINT_MAIN_CALLBACK_RATE, str.c_str());
+		}
 	});
 
 	geode::listenForSettingChanges<bool>("exclusive-fullscreen", [](bool enabled) {
