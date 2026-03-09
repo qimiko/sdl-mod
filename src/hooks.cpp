@@ -9,13 +9,11 @@
 
 struct $modify(PlatformToolbox) {
 	static void showCursor() {
-		geode::log::info("showCursor");
 		SDL_ShowCursor();
 		SDL_SetWindowRelativeMouseMode(SDLManager::get().m_window, false);
 	}
 
 	static void hideCursor() {
-		geode::log::info("hideCursor");
 		SDL_HideCursor();
 	}
 };
