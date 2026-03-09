@@ -67,6 +67,12 @@
 			"description": "Resets the <cd>color space</c> used on <cs>HDR displays</c> to the <cl>vanilla</c> setting, **Display P3**. This color space appears <cg>more vivid</c>, but is <cr>inaccurate</c> to the real colors.\n\nRealistically, <co>neither</c> option is <cp>perfectly accurate</c> due to how these displays work.",
 			"default": false,
 			"requires-restart": true
+		},
+		"use-ime": {
+			"type": "bool",
+			"name": "Enable IME",
+			"description": "Uses SDL's <cl>IME capabilities</c> for text inputs, which makes it possible to enter specific <cc>special characters</c> into text fields. Some mods <co>do not</c> handle this correctly.",
+			"default": false
 		}
 	},
 	"incompatibilities": {

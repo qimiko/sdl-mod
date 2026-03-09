@@ -234,6 +234,8 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 
 	SDLManager::get().m_targetFramerate = targetFramerate;
 
+	SDLManager::get().m_useIME = geode::Mod::get()->getSettingValue<bool>("use-ime");
+
 	if (disable_swap) {
 		auto str = geode::utils::numToString(targetFramerate);
 		SDL_SetHint(SDL_HINT_MAIN_CALLBACK_RATE, str.c_str());
@@ -387,6 +389,14 @@ $execute {
 
 	geode::listenForSettingChanges<std::string>("window-title", [](std::string value) {
 		SDL_SetWindowTitle(SDLManager::get().m_window, value.c_str());
+	});
+
+	geode::listenForSettingChanges<bool>("use-ime", [](bool enabled) {
+		SDLManager::get().m_useIME = enabled;
+		if (!enabled) {
+			auto window = SDLManager::get().m_window;
+			SDL_StopTextInput(window);
+		}
 	});
 
 	geode::GameEvent(geode::GameEventType::Exiting).listen([] {

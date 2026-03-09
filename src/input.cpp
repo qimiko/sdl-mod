@@ -381,6 +381,11 @@ void on_key_event(SDL_KeyboardEvent& event) {
 
 	auto modifiers = modifiers_from_keymod(event.mod);
 
+	auto fullKeyCode = SDL_GetKeyFromScancode(event.scancode, event.mod, false);
+	if ((fullKeyCode & SDLK_EXTENDED_MASK) == SDLK_EXTENDED_MASK || (fullKeyCode & SDLK_SCANCODE_MASK) == SDLK_SCANCODE_MASK) {
+		fullKeyCode = SDLK_UNKNOWN;
+	}
+
 	auto down = event.type == SDL_EVENT_KEY_DOWN;
 
 	KeyboardInputData data(
@@ -395,7 +400,7 @@ void on_key_event(SDL_KeyboardEvent& event) {
 		modifiers
 	);
 
-	Loader::get()->queueInMainThread([data = std::move(data), rawKeycode] mutable {
+	Loader::get()->queueInMainThread([data = std::move(data), fullKeyCode] mutable {
 		if (KeyboardInputEvent(data.key).send(data) != ListenerResult::Propagate) return;
 
     auto imeDispatcher = CCIMEDispatcher::sharedDispatcher();
@@ -436,8 +441,8 @@ void on_key_event(SDL_KeyboardEvent& event) {
 			}
 		} else {
 			auto isArrowKey = keyCode == KEY_Left || keyCode == KEY_Right;
-			if (isArrowKey || !SDL_TextInputActive(SDLManager::get().m_window)) {
-				char ch = rawKeycode;
+			if (isArrowKey || (fullKeyCode != SDLK_UNKNOWN && !SDL_TextInputActive(SDLManager::get().m_window))) {
+				char ch = fullKeyCode;
 				imeDispatcher->dispatchInsertText(&ch, 1, keyCode);
 			}
 		}
@@ -772,15 +777,18 @@ struct $modify(cocos2d::CCEGLView) {
 	void setIMEKeyboardState(bool activated) override {
 		CCEGLView::setIMEKeyboardState(activated);
 
-		auto window = SDLManager::get().m_window;
-		if (activated) {
-			if (s_hasIMECandidate) {
-				SDL_SetTextInputArea(window, &s_imeCandidate, 0);
+		if (SDLManager::get().m_useIME) {
+			auto window = SDLManager::get().m_window;
+			if (activated) {
+				if (s_hasIMECandidate) {
+					SDL_SetTextInputArea(window, &s_imeCandidate, 0);
+				}
+				SDL_StartTextInput(window);
+			} else {
+				SDL_StopTextInput(window);
 			}
-			SDL_StartTextInput(window);
-		} else {
-			SDL_StopTextInput(window);
 		}
 	}
 };
+
 
