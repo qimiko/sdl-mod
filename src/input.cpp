@@ -609,15 +609,6 @@ void handle_resize(SDL_WindowEvent& event) {
 	});
 }
 
-void reconstrain_to_aspect_ratio() {
-	if (SDLManager::get().m_unlockAspectRatio) {
-		return;
-	}
-
-	auto window = SDLManager::get().m_window;
-	SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-}
-
 SDL_AppResult SDLCALL my_event_callback(void *appstate, SDL_Event *event) {
 	auto appManager = reinterpret_cast<SDLManager*>(appstate);
 
@@ -668,7 +659,6 @@ SDL_AppResult SDLCALL my_event_callback(void *appstate, SDL_Event *event) {
 			break;
 		}
 		case SDL_EVENT_WINDOW_RESIZED:
-			reconstrain_to_aspect_ratio();
 			if constexpr (SDLManager::s_cocosHandlesScaling) {
 				handle_resize(event->window);
 			}

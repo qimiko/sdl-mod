@@ -205,6 +205,7 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 
 	*appstate = reinterpret_cast<void*>(&SDLManager::get());
 
+	SDL_SetWindowMinimumSize(window, 100, 100);
 	SDL_RaiseWindow(window);
 
 #if !ENABLE_VKMOD
