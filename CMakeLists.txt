@@ -16,6 +16,7 @@ set(SOURCES
     src/main.mm
     src/input.cpp
     src/objc.mm
+    src/hooks.cpp
 )
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
