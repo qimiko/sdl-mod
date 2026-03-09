@@ -21,6 +21,7 @@ public:
 	std::uint64_t m_timeDiff = 0;
 	float m_displayScale = 1.0f;
 	bool m_useIME = false;
+	bool m_unlockAspectRatio = false;
 
 	int m_targetFramerate = 0;
 	bool m_vsyncEnabled = false;

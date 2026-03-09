@@ -233,8 +233,15 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 		: geode::Mod::get()->getSettingValue<int>("framerate-limit");
 
 	SDLManager::get().m_targetFramerate = targetFramerate;
-
 	SDLManager::get().m_useIME = geode::Mod::get()->getSettingValue<bool>("use-ime");
+
+	auto unlockAspectRatio = geode::Mod::get()->getSettingValue<bool>("unlock-aspect-ratio");
+	SDLManager::get().m_unlockAspectRatio = unlockAspectRatio;
+
+	if (!unlockAspectRatio) {
+		auto targetAspect = gameResolution.width / gameResolution.height;
+		SDL_SetWindowAspectRatio(window, targetAspect, targetAspect);
+	}
 
 	if (disable_swap) {
 		auto str = geode::utils::numToString(targetFramerate);
@@ -398,6 +405,23 @@ $execute {
 			SDL_StopTextInput(window);
 		}
 	});
+
+	/*
+	// disabled as it didn't seem to work properly (crashes)
+	geode::listenForSettingChanges<bool>("unlock-aspect-ratio", [](bool enabled) {
+		auto window = SDLManager::get().m_window;
+		SDLManager::get().m_unlockAspectRatio = enabled;
+
+		if (enabled) {
+			auto gameResolution = GameManager::sharedState()->resolutionForKey(GameManager::sharedState()->m_resolution);
+			auto targetAspect = gameResolution.width / gameResolution.height;
+
+			SDL_SetWindowAspectRatio(window, targetAspect, targetAspect);
+		} else {
+			SDL_SetWindowAspectRatio(window, 0.0f, 0.0f);
+		}
+	});
+	*/
 
 	geode::GameEvent(geode::GameEventType::Exiting).listen([] {
 		geode::log::info("Closing Steam API");

@@ -68,6 +68,13 @@
 			"default": false,
 			"requires-restart": true
 		},
+		"unlock-aspect-ratio": {
+			"type": "bool",
+			"name": "Unlock Aspect Ratio",
+			"description": "Enables free resizing.",
+			"default": false,
+			"requires-restart": true
+		},
 		"use-ime": {
 			"type": "bool",
 			"name": "Enable IME",
