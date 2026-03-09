@@ -65,7 +65,11 @@ void on_mouse_input(SDL_MouseButtonEvent& event) {
 		modifiers
 	);
 
-	auto display_scale = SDLManager::get().m_displayScale;
+	auto display_scale = 1.0f;
+	if constexpr (!SDLManager::s_cocosHandlesScaling) {
+		display_scale = SDLManager::get().m_displayScale;
+	}
+
 	cocos2d::CCPoint point{event.x * display_scale, event.y * display_scale};
 
 	auto mouse_id = static_cast<int>(event.which);
@@ -83,7 +87,11 @@ void on_mouse_input(SDL_MouseButtonEvent& event) {
 }
 
 void on_mouse_move(SDL_MouseMotionEvent& event) {
-	auto display_scale = SDLManager::get().m_displayScale;
+	auto display_scale = 1.0f;
+	if constexpr (!SDLManager::s_cocosHandlesScaling) {
+		display_scale = SDLManager::get().m_displayScale;
+	}
+
 	cocos2d::CCPoint point{event.x * display_scale, event.y * display_scale};
 
 	bool is_left = (event.state & SDL_BUTTON_LEFT) != 0;
@@ -648,8 +656,15 @@ SDL_AppResult SDLCALL my_event_callback(void *appstate, SDL_Event *event) {
 				SDL_CloseGamepad(gamepad);
 			break;
 		}
+		case SDL_EVENT_WINDOW_RESIZED:
+			if constexpr (SDLManager::s_cocosHandlesScaling) {
+				handle_resize(event->window);
+			}
+			break;
 		case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
-			handle_resize(event->window);
+			if constexpr (!SDLManager::s_cocosHandlesScaling) {
+				handle_resize(event->window);
+			}
 			break;
 		case SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED:
 			update_display_scale();

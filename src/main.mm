@@ -41,8 +41,11 @@ void update_display_scale() {
 	// with display scale, we have the choice of either scaling inputs, or everything in cocos
 	// we chose inputs, but the other solution works just fine (basically no changes to end-user)
 
-	SDLManager::get().m_displayScale = display_scale;
-	// [[MetalGLView sharedEGLView] setBackingFactor:display_scale];
+	if constexpr (SDLManager::s_cocosHandlesScaling) {
+		[[MetalGLView sharedEGLView] setBackingFactor:display_scale];
+	} else {
+		SDLManager::get().m_displayScale = display_scale;
+	}
 }
 
 void toggle_vsync(bool disabled) {
