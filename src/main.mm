@@ -4,10 +4,11 @@
 #include "objc.h"
 #include "bind.h"
 
+#include <dlfcn.h>
+
 #define ENABLE_VKMOD 0
 
 #if ENABLE_VKMOD
-#include <dlfcn.h>
 #include "vkmod/Vulkan.hpp"
 #endif
 
@@ -455,7 +456,11 @@ $execute {
 	*/
 
 	geode::GameEvent(geode::GameEventType::Exiting).listen([] {
-		geode::log::info("Closing Steam API");
-		SteamAPI_Shutdown();
+		if (auto shutdownAddr = dlsym(RTLD_DEFAULT, "SteamAPI_Shutdown")) {
+			geode::log::info("Closing Steam API");
+			reinterpret_cast<void(*)()>(shutdownAddr)();
+		} else {
+			geode::log::warn("Failed to fetch address of SteamAPI_Shutdown");
+		}
 	}).leak();
 }

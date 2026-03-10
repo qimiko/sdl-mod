@@ -9,15 +9,11 @@
 
 		auto SteamManager_sharedState_addr = 0x52d2cc; // used in applicationDidFinishLaunching
 		auto SteamManager_setupSteam_addr = 0x52d51c;
-
-		auto SteamAPI_Shutdown_addr = 0x6d1634; // call stub, used in gameDidSave
 	#elif defined(GEODE_IS_INTEL_MAC)
 		auto AppController_applicationDidFinishLaunching_addr = 0x7470;
 
 		auto SteamManager_sharedState_addr = 0x606910;
 		auto SteamManager_setupSteam_addr = 0x606b70;
-
-		auto SteamAPI_Shutdown_addr = 0x7cf0de;
 	#endif
 #endif
 
@@ -30,7 +26,3 @@ struct SteamManager : public cocos2d::CCNode {
 		return reinterpret_cast<bool(*)(SteamManager*)>(geode::base::get() + SteamManager_setupSteam_addr)(this);
 	}
 };
-
-void SteamAPI_Shutdown() {
-	reinterpret_cast<void(*)()>(geode::base::get() + SteamAPI_Shutdown_addr)();
-}
