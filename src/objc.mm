@@ -66,8 +66,6 @@ static id s_sharedAppController;
 }
 
 -(cocos2d::CCSize) getDisplaySize {
-	geode::log::info("getDisplaySize");
-
 	auto window = SDLManager::get().m_window;
 	int width, height;
 	SDL_GetWindowSizeInPixels(window, &width, &height);
@@ -115,8 +113,6 @@ static id s_sharedMetalDirectorCaller;
 	if (s_sharedMetalDirectorCaller == nil) {
 		s_sharedMetalDirectorCaller = [[MetalCCDirectorCaller alloc] init];
 	}
-
-	// static_assert(offsetof(cocos2d::CCDirector, m_pobOpenGLView) == 0xb8);
 
 	return s_sharedMetalDirectorCaller;
 }

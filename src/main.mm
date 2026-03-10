@@ -36,7 +36,7 @@ void resize_window(int w, int h) {
 
 void update_display_scale() {
 	auto display_scale = SDL_GetWindowDisplayScale(SDLManager::get().m_window);
-	geode::log::debug("update_display_scale: {}", display_scale);
+	geode::log::debug("Updating display scale to {}x", display_scale);
 
 	// with display scale, we have the choice of either scaling inputs, or everything in cocos
 	// we chose inputs, but the other solution works just fine (basically no changes to end-user)
@@ -161,6 +161,18 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 #if !ENABLE_VKMOD
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+
+	/*
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+	*/
+
+	// vanilla parity
+	// we have to request stencil bits, or we won't get them (which breaks clipping nodes)
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 #endif
 
 	auto gameResolution = GameManager::sharedState()->resolutionForKey(GameManager::sharedState()->m_resolution);
@@ -209,17 +221,33 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 	SDL_RaiseWindow(window);
 
 #if !ENABLE_VKMOD
-	auto glContext = SDL_GL_CreateContext(window);
-	if (glContext == nullptr) {
+	if (!SDL_GL_CreateContext(window)) {
 		geode::log::warn("failed to create GL context: {}", SDL_GetError());
 		return SDL_APP_FAILURE;
 	}
 
-	auto vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
-	auto renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
-	auto version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+	geode::log::debug("GL context information:");
+	{
+		geode::log::pushNest();
 
-	geode::log::debug("gl information: {} ({}) - {}", renderer, vendor, version);
+		auto vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+		auto renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+		auto version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+
+		geode::log::debug("{} ({}) - {}", renderer, vendor, version);
+
+		GLint red, green, blue, alpha, depth, stencil;
+		glGetIntegerv(GL_RED_BITS, &red);
+		glGetIntegerv(GL_GREEN_BITS, &green);
+		glGetIntegerv(GL_BLUE_BITS, &blue);
+		glGetIntegerv(GL_ALPHA_BITS, &alpha);
+		glGetIntegerv(GL_DEPTH_BITS, &depth);
+		glGetIntegerv(GL_STENCIL_BITS, &stencil);
+
+		geode::log::debug("red={}, green={}, blue={}, alpha={}, depth={}, stencil={}", red, green, blue, alpha, depth, stencil);
+
+		geode::log::popNest();
+	}
 #endif
 
 	auto disable_swap = geode::Mod::get()->getSettingValue<bool>("disable-vsync");
