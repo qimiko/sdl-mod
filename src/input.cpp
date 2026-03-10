@@ -33,6 +33,42 @@ double translate_timestamp(std::uint64_t x) {
 	return relativeTime/1'000'000'000.0;
 }
 
+cocos2d::CCPoint translate_display_point(const cocos2d::CCPoint x) {
+	auto display_scale = 1.0f;
+	if constexpr (!SDLManager::s_cocosHandlesScaling) {
+		display_scale = SDLManager::get().m_displayScale;
+	}
+
+	return x * display_scale;
+}
+
+void dispatch_mouse_input_event(MouseInputData::Button event_button, bool down, double timestamp, int mouse_id, cocos2d::CCPoint base_point) {
+	KeyboardModifier modifiers = get_current_modifiers();
+
+	MouseInputData data(
+		event_button,
+		down
+			? MouseInputData::Action::Press
+			: MouseInputData::Action::Release,
+		timestamp,
+		modifiers
+	);
+
+	auto point = translate_display_point(base_point);
+
+	Loader::get()->queueInMainThread([data = std::move(data), mouse_id, point] mutable {
+		if (MouseInputEvent().send(data) != ListenerResult::Propagate) return;
+
+		if (data.button == MouseInputData::Button::Left) {
+			if (data.action == MouseInputData::Action::Press) {
+				cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleTouchesBegin(1, &mouse_id, &point.x, &point.y, data.timestamp);
+			} else {
+				cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleTouchesEnd(1, &mouse_id, &point.x, &point.y, data.timestamp);
+			}
+		}
+	});
+}
+
 void on_mouse_input(SDL_MouseButtonEvent& event) {
 	auto event_button = MouseInputData::Button::Left;
 	switch (event.button) {
@@ -51,45 +87,13 @@ void on_mouse_input(SDL_MouseButtonEvent& event) {
 	}
 
 	double timestamp = translate_timestamp(event.timestamp);
-	KeyboardModifier modifiers = get_current_modifiers();
-
-	MouseInputData data(
-		event_button,
-		event.down
-			? MouseInputData::Action::Press
-			: MouseInputData::Action::Release,
-		timestamp,
-		modifiers
-	);
-
-	auto display_scale = 1.0f;
-	if constexpr (!SDLManager::s_cocosHandlesScaling) {
-		display_scale = SDLManager::get().m_displayScale;
-	}
-
-	cocos2d::CCPoint point{event.x * display_scale, event.y * display_scale};
-
 	auto mouse_id = static_cast<int>(event.which);
-	Loader::get()->queueInMainThread([data = std::move(data), mouse_id, timestamp, point] mutable {
-		if (MouseInputEvent().send(data) != ListenerResult::Propagate) return;
 
-		if (data.button == MouseInputData::Button::Left) {
-			if (data.action == MouseInputData::Action::Press) {
-				cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleTouchesBegin(1, &mouse_id, &point.x, &point.y, timestamp);
-			} else {
-				cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleTouchesEnd(1, &mouse_id, &point.x, &point.y, timestamp);
-			}
-		}
-	});
+	dispatch_mouse_input_event(event_button, event.down, timestamp, mouse_id, {event.x, event.y});
 }
 
 void on_mouse_move(SDL_MouseMotionEvent& event) {
-	auto display_scale = 1.0f;
-	if constexpr (!SDLManager::s_cocosHandlesScaling) {
-		display_scale = SDLManager::get().m_displayScale;
-	}
-
-	cocos2d::CCPoint point{event.x * display_scale, event.y * display_scale};
+	auto point = translate_display_point({event.x, event.y});
 
 	bool is_left = (event.state & SDL_BUTTON_LEFT) != 0;
 	auto mouse_id = static_cast<int>(event.which);
@@ -527,6 +531,12 @@ void on_gamepad_button(SDL_GamepadButtonEvent& event) {
 	auto keyCode = translate_gamepad_button(static_cast<SDL_GamepadButton>(event.button));
 	auto down = event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN;
 
+	if (keyCode == CONTROLLER_A) {
+		SDLManager::get().m_mouseDown = down;
+	} else if (keyCode == CONTROLLER_Back) {
+		SDLManager::get().m_backDown = down;
+	}
+
 	dispatch_keypad_event(timestamp, keyCode, down, event.button);
 }
 
@@ -585,16 +595,40 @@ void on_gamepad_axis(SDL_GamepadAxisEvent& event) {
 			break;
 
 		case SDL_GAMEPAD_AXIS_LEFTX:
+			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*0.05) {
+				SDLManager::get().m_cursorHorizontal = event.value / static_cast<float>(SDL_JOYSTICK_AXIS_MAX);
+			} else {
+				SDLManager::get().m_cursorHorizontal = 0.0f;
+			}
+
 			handle_stick(CONTROLLER_LTHUMBSTICK_RIGHT, CONTROLLER_LTHUMBSTICK_LEFT, event.value, timestamp);
 			break;
 		case SDL_GAMEPAD_AXIS_LEFTY:
+			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*0.05) {
+				SDLManager::get().m_cursorVertical = event.value / static_cast<float>(SDL_JOYSTICK_AXIS_MAX);
+			} else {
+				SDLManager::get().m_cursorVertical = 0.0f;
+			}
+
 			handle_stick(CONTROLLER_LTHUMBSTICK_DOWN, CONTROLLER_LTHUMBSTICK_UP, event.value, timestamp);
 			break;
 
 		case SDL_GAMEPAD_AXIS_RIGHTX:
+			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*0.05) {
+				SDLManager::get().m_scrollHorizontal = event.value / static_cast<float>(SDL_JOYSTICK_AXIS_MAX);
+			} else {
+				SDLManager::get().m_scrollHorizontal = 0.0f;
+			}
+
 			handle_stick(CONTROLLER_RTHUMBSTICK_RIGHT, CONTROLLER_RTHUMBSTICK_LEFT, event.value, timestamp);
 			break;
 		case SDL_GAMEPAD_AXIS_RIGHTY:
+			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*0.05) {
+				SDLManager::get().m_scrollVertical = event.value / static_cast<float>(SDL_JOYSTICK_AXIS_MAX);
+			} else {
+				SDLManager::get().m_scrollVertical = 0.0f;
+			}
+
 			handle_stick(CONTROLLER_RTHUMBSTICK_DOWN, CONTROLLER_RTHUMBSTICK_UP, event.value, timestamp);
 			break;
 	}
@@ -729,4 +763,81 @@ SDL_AppResult SDLCALL my_event_callback(void *appstate, SDL_Event *event) {
 	}
 
 	return SDL_APP_CONTINUE;
+}
+
+void update_mouse_position() {
+	if (!SDLManager::get().m_cursorHidden) {
+		auto cursorVertical = SDLManager::get().m_cursorVertical;
+		auto cursorHorizontal = SDLManager::get().m_cursorHorizontal;
+
+		static auto sentMouseState = false;
+		static auto sentBackState = false;
+
+		auto currentBackState = SDLManager::get().m_backDown;
+		if (currentBackState != sentBackState) {
+			auto timestamp = geode::utils::getInputTimestamp();
+			dispatch_keypad_event(timestamp, KEY_Escape, currentBackState, 0);
+
+			sentBackState = currentBackState;
+		}
+
+		auto currentMouseState = SDLManager::get().m_mouseDown;
+		if (currentMouseState != sentMouseState) {
+			float x, y;
+			SDL_GetMouseState(&x, &y);
+
+			dispatch_mouse_input_event(
+				MouseInputData::Button::Left,
+				currentMouseState,
+				geode::utils::getInputTimestamp(),
+				1,
+				{x, y}
+			);
+
+			sentMouseState = currentMouseState;
+		}
+
+		if (cursorVertical != 0.0f || cursorHorizontal != 0.0f) {
+			constexpr auto cursorScaleFactor = 12.0f;
+
+			auto window = SDLManager::get().m_window;
+			auto pushHoriz = cursorHorizontal * cursorScaleFactor;
+			auto pushVert = cursorVertical * cursorScaleFactor;
+
+			float x, y;
+			SDL_GetMouseState(&x, &y);
+			SDL_WarpMouseInWindow(window, x + pushHoriz, y + pushVert);
+
+			auto point = translate_display_point({x, y});
+
+			if (MouseMoveEvent().send(point.x, point.y) == ListenerResult::Propagate && currentMouseState) {
+				auto timestamp = geode::utils::getInputTimestamp();
+
+				auto mouse_id = 1;
+				cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleTouchesMove(1, &mouse_id, &point.x, &point.y, timestamp);
+			}
+		}
+
+		auto scrollVertical = SDLManager::get().m_scrollVertical;
+		auto scrollHorizontal = SDLManager::get().m_scrollHorizontal;
+		if (scrollVertical != 0.0f || scrollHorizontal != 0.0f) {
+			constexpr auto scrollScaleFactor = 8.0f;
+
+			auto x = -scrollHorizontal * scrollScaleFactor;
+			auto y = scrollVertical * scrollScaleFactor;
+
+			if (geode::ScrollWheelEvent().send(x, y) != geode::ListenerResult::Propagate) return;
+			cocos2d::CCDirector::sharedDirector()->getMouseDispatcher()->dispatchScrollMSG(y, x);
+		}
+	}
+}
+
+void SDLManager::reset_controller_keys() {
+	m_cursorHidden = false;
+	m_cursorVertical = 0.0f;
+	m_cursorHorizontal = 0.0f;
+	m_scrollVertical = 0.0f;
+	m_scrollHorizontal = 0.0f;
+	m_mouseDown = false;
+	m_backDown = false;
 }

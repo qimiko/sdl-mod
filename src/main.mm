@@ -150,7 +150,7 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 	SDL_SetAppMetadata(
 		"Geometry Dash",
 		geode::Loader::get()->getGameVersion().c_str(),
-		"com.robtop.geometrydashmac"
+		"com.robtop.geometrydash-mac"
 	);
 
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {

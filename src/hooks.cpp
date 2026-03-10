@@ -9,11 +9,15 @@
 
 struct $modify(PlatformToolbox) {
 	static void showCursor() {
+		SDLManager::get().m_cursorHidden = false;
+
 		SDL_ShowCursor();
 		SDL_SetWindowRelativeMouseMode(SDLManager::get().m_window, false);
 	}
 
 	static void hideCursor() {
+		SDLManager::get().m_cursorHidden = true;
+
 		SDL_HideCursor();
 	}
 };
@@ -66,6 +70,8 @@ struct $modify(cocos2d::CCEGLView) {
 };
 
 void enableLockCursor() {
+	SDLManager::get().m_cursorHidden = true;
+
 	SDL_SetWindowRelativeMouseMode(SDLManager::get().m_window, true);
 }
 

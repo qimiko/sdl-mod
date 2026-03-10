@@ -49,10 +49,15 @@ static id s_sharedAppController;
 	AppDelegate::get()->trySaveGame(true);
 }
 
--(void) updateMousePosition {}
+-(void) updateMousePosition {
+	update_mouse_position();
+}
 
 -(void) toggleMouseControl:(bool)on {
-	geode::log::debug("toggleMouseControl: {}", on);
+	if (!on) {
+		SDLManager::get().reset_controller_keys();
+		update_mouse_position();
+	}
 }
 
 -(void) queueWindowResize:(CGRect)sz Center:(bool)on {
@@ -61,6 +66,8 @@ static id s_sharedAppController;
 }
 
 -(cocos2d::CCSize) getDisplaySize {
+	geode::log::info("getDisplaySize");
+
 	auto window = SDLManager::get().m_window;
 	int width, height;
 	SDL_GetWindowSizeInPixels(window, &width, &height);

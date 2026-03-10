@@ -8,6 +8,8 @@
 
 SDL_AppResult SDLCALL my_event_callback(void *appstate, SDL_Event *event);
 
+void update_mouse_position();
+
 class SDLManager {
 private:
 	SDLManager() {}
@@ -26,7 +28,17 @@ public:
 	int m_targetFramerate = 0;
 	bool m_vsyncEnabled = false;
 
+	bool m_cursorHidden = false;
+	float m_cursorVertical = 0.0f;
+	float m_cursorHorizontal = 0.0f;
+	float m_scrollVertical = 0.0f;
+	float m_scrollHorizontal = 0.0f;
+	bool m_mouseDown = false;
+	bool m_backDown = false;
+
 	static SDLManager& get();
+
+	void reset_controller_keys();
 };
 
 void trigger_shutdown();
