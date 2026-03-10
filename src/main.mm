@@ -117,6 +117,8 @@ void fix_menu_items() {
 	auto mainMenu = [NSApp mainMenu];
 	auto appMenu = [[mainMenu itemAtIndex:0] submenu];
 
+	bool fixedItem = false;
+
 	for (NSMenuItem* item in [appMenu itemArray]) {
 		// Quit Geometry Dash
 		id target = [item target];
@@ -125,7 +127,14 @@ void fix_menu_items() {
 			auto updInst = [[NSClassFromString(@"AppControllerManager") sharedInstance] controller];
 			[item setTarget:updInst];
 			[item setAction:@selector(shutdownGame)];
+
+			fixedItem = true;
+			break;
 		}
+	}
+
+	if (!fixedItem) {
+		geode::log::warn("Failed to fix terminate menu item - ⌘ + Q might not work!");
 	}
 }
 
