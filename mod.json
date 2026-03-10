@@ -79,7 +79,7 @@
 			"type": "bool",
 			"name": "Enable IME",
 			"description": "Uses SDL's <cl>IME capabilities</c> for text inputs, which makes it possible to enter specific <cc>special characters</c> into text fields. Some mods <co>do not</c> handle this correctly.",
-			"default": false
+			"default": true
 		}
 	},
 	"incompatibilities": {
