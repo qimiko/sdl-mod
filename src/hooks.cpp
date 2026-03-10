@@ -25,18 +25,35 @@ struct $modify(PlatformToolbox) {
 SDL_Rect s_imeCandidate{};
 bool s_hasIMECandidate = false;
 
-/*
 struct $modify(cocos2d::CCTextFieldTTF) {
 	bool attachWithIME() {
 		if (this->getParent()) {
-			auto worldPos = this->getParent()->convertToWorldSpace(this->getPosition());
+			auto displayScale = 1.0f;
+			if constexpr (!SDLManager::s_cocosHandlesScaling) {
+				displayScale = SDLManager::get().m_displayScale;
+			}
 
+			// sdl origin is upper left, while cocos origin is bottom left
+
+			auto frameSize = cocos2d::CCEGLView::sharedOpenGLView()->getFrameSize();
+			auto winSize = cocos2d::CCDirector::sharedDirector()->getWinSize();
+
+			auto scaleFactor = (frameSize.width / winSize.width) / displayScale;
+
+			auto worldPos = this->convertToWorldSpace({0.0f, 0.0f});
+			auto uiPos = cocos2d::CCPoint {worldPos.x, winSize.height - worldPos.y} * scaleFactor;
+
+			auto windowWidth = this->getScaledContentWidth() * scaleFactor;
+			auto windowHeight = this->getScaledContentHeight() * scaleFactor;
+
+			// attempt to center the ime on the text field
+			// not perfect unfortunately...
 			s_hasIMECandidate = true;
-			s_imeCandidate = SDL_Rect {
-				static_cast<int>(worldPos.x),
-				static_cast<int>(worldPos.y),
-				static_cast<int>(this->getScaledContentWidth()),
-				static_cast<int>(this->getScaledContentHeight())
+			s_imeCandidate = {
+				static_cast<int>(uiPos.x + windowWidth / 2),
+				static_cast<int>(uiPos.y - windowHeight),
+				static_cast<int>(windowWidth/2),
+				static_cast<int>(windowHeight),
 			};
 		}
 
@@ -49,7 +66,6 @@ struct $modify(cocos2d::CCTextFieldTTF) {
 		return CCTextFieldTTF::detachWithIME();
 	}
 };
-*/
 
 struct $modify(cocos2d::CCEGLView) {
 	void setIMEKeyboardState(bool activated) override {
@@ -59,6 +75,7 @@ struct $modify(cocos2d::CCEGLView) {
 			auto window = SDLManager::get().m_window;
 			if (activated) {
 				if (s_hasIMECandidate) {
+					// we would've used the cursor offset here, but it didn't seem to work
 					SDL_SetTextInputArea(window, &s_imeCandidate, 0);
 				}
 				SDL_StartTextInput(window);
