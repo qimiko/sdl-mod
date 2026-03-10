@@ -8,16 +8,16 @@ using namespace geode::prelude;
 KeyboardModifier modifiers_from_keymod(SDL_Keymod flags) {
 	KeyboardModifier modifiers = KeyboardModifier::None;
 
-	if ((flags & SDL_KMOD_SHIFT) == SDL_KMOD_SHIFT) {
+	if ((flags & SDL_KMOD_SHIFT) != 0) {
 		modifiers |= KeyboardModifier::Shift;
 	}
-	if ((flags & SDL_KMOD_CTRL) == SDL_KMOD_CTRL) {
+	if ((flags & SDL_KMOD_CTRL) != 0) {
 		modifiers |= KeyboardModifier::Control;
 	}
-	if ((flags & SDL_KMOD_ALT) == SDL_KMOD_ALT) {
+	if ((flags & SDL_KMOD_ALT) != 0) {
 		modifiers |= KeyboardModifier::Alt;
 	}
-	if ((flags & SDL_KMOD_GUI) == SDL_KMOD_GUI) {
+	if ((flags & SDL_KMOD_GUI) != 0) {
 		modifiers |= KeyboardModifier::Super;
 	}
 
