@@ -41,7 +41,7 @@
 		"exclusive-fullscreen": {
 			"type": "bool",
 			"name": "Exclusive Fullscreen",
-			"description": "Recontexualizes the <cl>ingame fullscreen option</c> to use <cg>exclusive fullscreen</c>, allowing for it to <cp>draw underneath</c> display cutouts.\n\nExclusive fullscreen <cr>acts strangely</c> on macOS (and Geometry Dash does not properly support display cutouts), so it is <co>not recommended</c> to enable this unless you are <cd>prepared</c>.",
+			"description": "Recontexualizes the <cl>ingame fullscreen option</c> to use <cg>exclusive fullscreen</c>, allowing for it to <cp>draw underneath</c> display cutouts.\n\nExclusive fullscreen <cr>acts strangely</c> on macOS, including **desktop softlocks** and **odd crashes**. Geometry Dash also does not properly support vertical display cutouts, so it is <co>not recommended</c> to enable this unless you are _<cd>prepared</c>_.",
 			"default": false
 		},
 		"disable-high-dpi": {
