@@ -211,6 +211,12 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 	fix_menu_items();
 	fix_relative_timer();
 
+	auto fullScreen = !GameManager::sharedState()->getGameVariable(GameVar::WindowedMode);
+
+	// only force exclusive fullscreen if we're right about to go into fullscreen
+	auto exclusive_fullscreen = geode::Mod::get()->getSettingValue<bool>("exclusive-fullscreen");
+	toggle_exclusive_fullscreen(exclusive_fullscreen, fullScreen);
+
 	if (geode::Mod::get()->getSettingValue<bool>("p3-color-space")) {
 		fix_color_space();
 	}
@@ -277,8 +283,9 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 		SDL_SetHint(SDL_HINT_MAIN_CALLBACK_RATE, str.c_str());
 	}
 
-	auto exclusive_fullscreen = geode::Mod::get()->getSettingValue<bool>("exclusive-fullscreen");
-	toggle_exclusive_fullscreen(exclusive_fullscreen, false);
+	if (fullScreen) {
+		SDL_SetWindowFullscreen(window, true);
+	}
 
 	update_display_scale();
 
@@ -292,11 +299,6 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 #endif
 
 	AppDelegate::get()->applicationDidFinishLaunching();
-
-	auto fullScreen = GameManager::sharedState()->getGameVariable(GameVar::WindowedMode);
-	if (!fullScreen) {
-		SDL_SetWindowFullscreen(window, true);
-	}
 
 	return SDL_APP_CONTINUE;
 }
