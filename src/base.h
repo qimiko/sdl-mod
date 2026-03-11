@@ -1,10 +1,9 @@
 #pragma once
 
-#define SDL_MAIN_HANDLED
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
-
 #include <cstdint>
+
+#include <SDL3/SDL_init.h>
+#include <SDL3/SDL_video.h>
 
 SDL_AppResult SDLCALL my_event_callback(void *appstate, SDL_Event *event);
 

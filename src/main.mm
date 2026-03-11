@@ -1,3 +1,9 @@
+#define SDL_MAIN_HANDLED
+#include <SDL3/SDL_main.h>
+#include <SDL3/SDL_video.h>
+#include <SDL3/SDL_hints.h>
+#include <SDL3/SDL_timer.h>
+
 #include <Geode/Geode.hpp>
 
 #include "base.h"
