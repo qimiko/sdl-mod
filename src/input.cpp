@@ -101,7 +101,7 @@ void on_key_event(SDL_KeyboardEvent& event) {
 	auto modifiers = modifiers_from_keymod(event.mod);
 
 	auto fullKeyCode = SDL_GetKeyFromScancode(event.scancode, event.mod, false);
-	if ((fullKeyCode & SDLK_EXTENDED_MASK) == SDLK_EXTENDED_MASK || (fullKeyCode & SDLK_SCANCODE_MASK) == SDLK_SCANCODE_MASK) {
+	if ((fullKeyCode & SDLK_EXTENDED_MASK) != 0 || (fullKeyCode & SDLK_SCANCODE_MASK) != 0) {
 		fullKeyCode = SDLK_UNKNOWN;
 	}
 
@@ -150,9 +150,7 @@ void on_key_event(SDL_KeyboardEvent& event) {
 			imeDispatcher->dispatchDeleteForward();
 		} else if (keyCode == KEY_V && (modifiers & KeyboardModifier::Super) != KeyboardModifier::None) {
 			auto str = geode::utils::clipboard::read();
-			for (auto ch : str) {
-				imeDispatcher->dispatchInsertText(&ch, 1, keyCode);
-			}
+			imeDispatcher->dispatchInsertText(str.data(), str.size(), keyCode);
 		} else if (keyCode == KEY_Escape) {
 			auto window = SDLManager::get().m_window;
 			if (SDL_TextInputActive(window)) {
@@ -160,9 +158,15 @@ void on_key_event(SDL_KeyboardEvent& event) {
 			}
 		} else {
 			auto isArrowKey = keyCode == KEY_Left || keyCode == KEY_Right;
-			if (isArrowKey || (fullKeyCode != SDLK_UNKNOWN && !SDL_TextInputActive(SDLManager::get().m_window))) {
-				char ch = fullKeyCode;
+			if (isArrowKey) {
+				auto ch = 'a';
 				imeDispatcher->dispatchInsertText(&ch, 1, keyCode);
+			} else if (fullKeyCode != SDLK_UNKNOWN && !SDL_TextInputActive(SDLManager::get().m_window)) {
+				char outputBuf[4];
+				auto end = SDL_UCS4ToUTF8(fullKeyCode, outputBuf);
+				std::string_view toSend{outputBuf, end};
+
+				imeDispatcher->dispatchInsertText(toSend.data(), toSend.size(), keyCode);
 			}
 		}
 	});
@@ -419,11 +423,11 @@ bool sdl_on_event(void* appstate, SDL_Event* event) {
 			break;
 		}
 		case SDL_EVENT_TEXT_INPUT: {
-			auto imeDispatcher = CCIMEDispatcher::sharedDispatcher();
-			for (auto c : std::string_view{event->text.text}) {
-				auto ch = c;
-				imeDispatcher->dispatchInsertText(&ch, 1, KEY_Unknown);
-			}
+			std::string data{event->text.text};
+			Loader::get()->queueInMainThread([data = std::move(data)] {
+				auto imeDispatcher = CCIMEDispatcher::sharedDispatcher();
+				imeDispatcher->dispatchInsertText(data.data(), data.size(), KEY_Unknown);
+			});
 			break;
 		}
 		/*
