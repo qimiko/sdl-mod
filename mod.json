@@ -7,9 +7,9 @@
 	"name": "SDL Mod",
 	"version": "v1.0.0",
 	"developer": "zmx",
-	"description": "evil mod that makes your game sdl",
+	"description": "Full rewrite of the windowing layer on macOS",
 	"early-load": true,
-	"tags": ["interface", "bugfix", "utility", "enhancement", "universal", "performance", "offline"],
+	"tags": ["interface", "bugfix", "enhancement", "universal", "performance", "offline"],
 	"links": {
 		"source": "https://github.com/qimiko/sdl-mod"
 	},

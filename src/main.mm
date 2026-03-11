@@ -432,6 +432,22 @@ $execute {
 	});
 
 	geode::listenForSettingChanges<bool>("exclusive-fullscreen", [](bool enabled) {
+		if (enabled) {
+			auto shownWarning = geode::Mod::get()->getSavedValue<bool>("shown-exclusive-warning");
+			if (!shownWarning) {
+				geode::createQuickPopup(
+					"Exclusive Fullscreen",
+					"Be <cr>careful</c>! This option is very <cy>unstable</c> and may disable the macOS system UI, locking you into the game. If you <cj>get stuck</c>, CMD + Q or CMD + Tab usually works...",
+					"OK", nullptr,
+					[](auto, bool btn2) {
+						geode::Mod::get()->setSavedValue<bool>("shown-exclusive-warning", true);
+						toggle_exclusive_fullscreen(true, false);
+					}
+				);
+				return;
+			}
+		}
+
 		toggle_exclusive_fullscreen(enabled, false);
 	});
 
