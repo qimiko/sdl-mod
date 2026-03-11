@@ -5,15 +5,15 @@
 // some of these aren't in bindings
 #if GEODE_COMP_GD_VERSION == 22081
 	#if defined(GEODE_IS_ARM_MAC)
-		auto AppController_applicationDidFinishLaunching_addr = 0x6914;
+		constexpr std::uintptr_t AppController_applicationDidFinishLaunching_addr = 0x6914;
 
-		auto SteamManager_sharedState_addr = 0x52d2cc; // used in applicationDidFinishLaunching
-		auto SteamManager_setupSteam_addr = 0x52d51c;
+		constexpr std::uintptr_t SteamManager_sharedState_addr = 0x52d2cc; // used in applicationDidFinishLaunching
+		constexpr std::uintptr_t SteamManager_setupSteam_addr = 0x52d51c;
 	#elif defined(GEODE_IS_INTEL_MAC)
-		auto AppController_applicationDidFinishLaunching_addr = 0x7470;
+		constexpr std::uintptr_t AppController_applicationDidFinishLaunching_addr = 0x7470;
 
-		auto SteamManager_sharedState_addr = 0x606910;
-		auto SteamManager_setupSteam_addr = 0x606b70;
+		constexpr std::uintptr_t SteamManager_sharedState_addr = 0x606910;
+		constexpr std::uintptr_t SteamManager_setupSteam_addr = 0x606b70;
 	#endif
 #endif
 

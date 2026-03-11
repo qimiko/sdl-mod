@@ -15,15 +15,14 @@ project(sdl-mod VERSION 1.0.0)
 set(SOURCES
     src/main.mm
     src/input.cpp
-    src/objc.mm
     src/hooks.cpp
     src/keymap.cpp
+    src/events.cpp
 )
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
 set_source_files_properties(
     src/main.mm
-    src/objc.mm
     PROPERTIES SKIP_PRECOMPILE_HEADERS ON
 )
 

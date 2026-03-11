@@ -2,12 +2,7 @@
 
 #include <cstdint>
 
-#include <SDL3/SDL_init.h>
 #include <SDL3/SDL_video.h>
-
-SDL_AppResult SDLCALL my_event_callback(void *appstate, SDL_Event *event);
-
-void update_mouse_position();
 
 class SDLManager {
 private:
@@ -39,9 +34,3 @@ public:
 
 	void reset_controller_keys();
 };
-
-void trigger_shutdown();
-void update_display_scale();
-void resize_window(int w, int h);
-void toggle_exclusive_fullscreen(bool enabled, bool force);
-void check_exclusive_fullscreen();

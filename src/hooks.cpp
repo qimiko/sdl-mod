@@ -1,5 +1,8 @@
 #include "base.h"
 
+#include <SDL3/SDL_mouse.h>
+#include <SDL3/SDL_keyboard.h>
+
 #include <Geode/Geode.hpp>
 
 #include <Geode/modify/PlatformToolbox.hpp>

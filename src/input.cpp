@@ -1,8 +1,13 @@
-#include "base.h"
-#include "keymap.h"
+#include <SDL3/SDL_keyboard.h>
+#include <SDL3/SDL_events.h>
 
 #include <Geode/Geode.hpp>
 #include <Geode/utils/Keyboard.hpp>
+
+#include "base.h"
+#include "keymap.h"
+#include "platform.h"
+#include "events.h"
 
 using namespace geode::prelude;
 
@@ -333,17 +338,17 @@ void handle_resize(SDL_WindowEvent& event) {
 	});
 }
 
-SDL_AppResult SDLCALL my_event_callback(void *appstate, SDL_Event *event) {
+bool sdl_on_event(void* appstate, SDL_Event* event) {
 	auto appManager = reinterpret_cast<SDLManager*>(appstate);
 
 	if (appManager->m_stopped) {
-		return SDL_APP_SUCCESS;
+		return false;
 	}
 
 	switch (event->type) {
 		case SDL_EVENT_QUIT:
 			Loader::get()->queueInMainThread([] {
-				trigger_shutdown();
+				platform_trigger_shutdown();
 			});
 			break;
 		case SDL_EVENT_MOUSE_BUTTON_UP:
@@ -452,7 +457,7 @@ SDL_AppResult SDLCALL my_event_callback(void *appstate, SDL_Event *event) {
 		*/
 	}
 
-	return SDL_APP_CONTINUE;
+	return true;
 }
 
 void update_mouse_position() {
