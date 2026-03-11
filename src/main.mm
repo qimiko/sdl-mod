@@ -79,6 +79,14 @@ void applicationDidFinishLaunching(void* self, SEL, NSNotification*) {
 	std::exit(0);
 }
 
+NSApplicationTerminateReply applicationShouldTerminate(void* self, SEL, NSApplication*) {
+	SDL_Event ev{};
+	ev.type = SDL_EVENT_QUIT;
+	SDL_PushEvent(&ev);
+
+	return NSTerminateCancel;
+}
+
 MetalGLView* c_sharedEGLView() {
 	return [MetalGLView sharedEGLView];
 }
@@ -259,6 +267,23 @@ $execute {
 		);
 		if (!h) {
 			geode::log::warn("failed to hook EAGLView sharedEGLView: {}", h.unwrapErr());
+		}
+		h.unwrap()->setPriority(geode::Priority::Replace);
+	}
+
+	{
+		auto objc_class = objc_getClass("AppController");
+		auto method = class_getInstanceMethod(objc_class, @selector(applicationShouldTerminate:));
+		auto impl = method_getImplementation(method);
+
+		auto h = geode::Mod::get()->hook(
+			reinterpret_cast<void*>(impl),
+			&applicationShouldTerminate,
+			"[AppController applicationShouldTerminate:]",
+			tulip::hook::TulipConvention::Default
+		);
+		if (!h) {
+			geode::log::warn("failed to hook AppController applicationShouldTerminate: {}", h.unwrapErr());
 		}
 		h.unwrap()->setPriority(geode::Priority::Replace);
 	}
