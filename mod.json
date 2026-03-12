@@ -5,7 +5,7 @@
 	},
 	"id": "zmx.sdl",
 	"name": "SDL Mod",
-	"version": "v1.0.1",
+	"version": "v1.0.2",
 	"developer": "zmx",
 	"description": "Full rewrite of the windowing layer on macOS",
 	"early-load": true,
