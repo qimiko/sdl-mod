@@ -380,6 +380,7 @@ $execute {
 
 	/*
 	// disabled as it didn't seem to work properly (crashes)
+	// TODO: maybe one day https://github.com/libsdl-org/sdl/issues/14229 will be fixed
 	geode::listenForSettingChanges<bool>("unlock-aspect-ratio", [](bool enabled) {
 		auto window = SDLManager::get().m_window;
 		SDLManager::get().m_unlockAspectRatio = enabled;

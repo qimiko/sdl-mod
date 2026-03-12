@@ -154,7 +154,20 @@ static id s_sharedAppController;
 
 -(void) queueWindowResize:(CGRect)sz Center:(bool)on {
 	auto window = SDLManager::get().m_window;
+
+	if (!SDLManager::get().m_unlockAspectRatio) {
+		auto newTarget = sz.size.width / sz.size.height;
+		SDL_SetWindowAspectRatio(window, newTarget, newTarget);
+
+		// sync or the aspect ratio change messes up the final window size
+		SDL_SyncWindow(window);
+	}
+
 	SDL_SetWindowSize(window, sz.size.width, sz.size.height);
+
+	if (on) {
+		SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+	}
 }
 
 -(cocos2d::CCSize) getDisplaySize {

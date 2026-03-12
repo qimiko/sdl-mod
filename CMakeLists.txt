@@ -10,7 +10,7 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
-project(sdl-mod VERSION 1.0.1)
+project(sdl-mod VERSION 1.0.2)
 
 set(SOURCES
     src/main.mm
