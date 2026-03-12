@@ -87,7 +87,7 @@ void toggle_exclusive_fullscreen(bool enabled, bool force) {
 	}
 
 	auto window_flags = SDL_GetWindowFlags(window);
-	if (!force && (window_flags & SDL_WINDOW_FULLSCREEN) != 0) {
+	if (!force && (window_flags & SDL_WINDOW_FULLSCREEN) != SDL_WINDOW_FULLSCREEN) {
 		// wait until we're going into fullscreen to apply this
 		return;
 	}
