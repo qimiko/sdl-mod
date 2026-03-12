@@ -411,14 +411,18 @@ bool sdl_on_event(void* appstate, SDL_Event* event) {
 			// with exclusive fullscreen, zoom status should be untied from exclusive status
 			auto exclusive_fullscreen = geode::Mod::get()->getSettingValue<bool>("exclusive-fullscreen");
 			if (!exclusive_fullscreen) {
-				GameManager::sharedState()->setGameVariable(GameVar::WindowedMode, false);
+				Loader::get()->queueInMainThread([] {
+					GameManager::sharedState()->setGameVariable(GameVar::WindowedMode, false);
+				});
 			}
 			break;
 		}
     case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN: {
 			auto exclusive_fullscreen = geode::Mod::get()->getSettingValue<bool>("exclusive-fullscreen");
 			if (!exclusive_fullscreen) {
-				GameManager::sharedState()->setGameVariable(GameVar::WindowedMode, true);
+				Loader::get()->queueInMainThread([] {
+					GameManager::sharedState()->setGameVariable(GameVar::WindowedMode, true);
+				});
 			}
 			break;
 		}
