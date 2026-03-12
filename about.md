@@ -2,7 +2,7 @@
 
 Evil mod that replaces the <cc>windowing backend</c> on **macOS** with <cf>SDL</c>. For some reason, this fixes <cg>a lot</c> of issues, including:
 
-- <ca>Improved frame pacing</c> (significant framerate increase)
+- <ca>Improved frame pacing</c> (significant framerate increase on some setups)
 - <cr>Improved resolution</c> on Retina devices
 - Fixed <cj>display cutout issues</c> in fullscreen
 - Slightly more accurate <cr>c</c><co>o</c><cy>l</c><cg>o</c><cb>r</c><ca>s</c>
