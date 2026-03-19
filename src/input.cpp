@@ -434,6 +434,18 @@ bool sdl_on_event(void* appstate, SDL_Event* event) {
 			});
 			break;
 		}
+		case SDL_EVENT_WINDOW_FOCUS_LOST:
+			Loader::get()->queueInMainThread([]{
+				// if you wanted to be very realistic, gd appears to call applicationWillEnterBackground if the window is fullscreen
+				// this breaks a lot of stuff here so i'm not calling it, but you could if you wanted to
+				AppDelegate::get()->applicationWillResignActive();
+			});
+			break;
+		case SDL_EVENT_WINDOW_FOCUS_GAINED:
+			Loader::get()->queueInMainThread([]{
+				AppDelegate::get()->applicationWillBecomeActive();
+			});
+			break;
 		/*
 		case SDL_EVENT_TEXT_EDITING:
 			geode::log::info("SDL_EVENT_TEXT_EDITING: {} {} {}", event->edit.text, event->edit.start, event->edit.length);
@@ -451,8 +463,6 @@ bool sdl_on_event(void* appstate, SDL_Event* event) {
 		case SDL_EVENT_WINDOW_RESIZED:
 		case SDL_EVENT_WINDOW_MOUSE_ENTER:
 		case SDL_EVENT_WINDOW_MOUSE_LEAVE:
-		case SDL_EVENT_WINDOW_FOCUS_GAINED:
-		case SDL_EVENT_WINDOW_FOCUS_LOST:
 		case SDL_EVENT_WINDOW_SAFE_AREA_CHANGED:
 		case SDL_EVENT_WINDOW_OCCLUDED:
 		case SDL_EVENT_KEYBOARD_ADDED:
