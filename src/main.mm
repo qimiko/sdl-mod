@@ -32,7 +32,7 @@ std::uint64_t get_platform_time_ns() {
 void fix_color_space() {
 	auto props = SDL_GetWindowProperties(SDLManager::get().m_window);
 	if (auto nsWindow = reinterpret_cast<NSWindow*>(SDL_GetPointerProperty(props, SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, nullptr))) {
-		[nsWindow setColorSpace:[NSColorSpace displayP3ColorSpace]];
+		[nsWindow setColorSpace:[[nsWindow screen] colorSpace]];
 	}
 }
 

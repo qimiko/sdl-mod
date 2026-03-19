@@ -64,7 +64,7 @@
 		"p3-color-space": {
 			"type": "bool",
 			"name": "Revert Color Space",
-			"description": "Resets the <cd>color space</c> used on <cs>HDR displays</c> to the <cl>vanilla</c> setting, **Display P3**. This color space appears <cg>more vivid</c>, but is <cr>inaccurate</c> to the real colors.\n\nRealistically, <co>neither</c> option is <cp>perfectly accurate</c> due to how these displays work.",
+			"description": "Resets the <cd>color space</c> used on <cs>HDR displays</c> to the <cl>vanilla</c> setting, usually **Display P3**. This color space appears <cg>more vivid</c>, but is <cr>inaccurate</c> to the real colors.\n\nRealistically, <co>neither</c> option is <cp>perfectly accurate</c> due to how these displays work. If you are on an external HDR monitor, more configuration may be necessary.",
 			"default": false,
 			"requires-restart": true
 		},
