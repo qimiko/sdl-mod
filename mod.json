@@ -1,5 +1,5 @@
 {
-	"geode": "5.3.0",
+	"geode": "5.4.0",
 	"gd": {
 		"mac": "2.2081"
 	},
@@ -48,6 +48,13 @@
 			"type": "bool",
 			"name": "Disable High DPI Mode",
 			"description": "Disables <cp>High DPI</c> mode on <cl>Retina displays</c>, meaning the game will run at a <cr>lower resolution</c> that is then upscaled to fit the display (typically <cy>2x scale</c>). Enabling may <cg>improve performance</c> on GPU heavy levels, as well as <cj>improve scaling</c> on some overlay mods.",
+			"default": false,
+			"requires-restart": true
+		},
+		"switch-quit": {
+			"type": "bool",
+			"name": "Windows-Style Quit Keybind",
+			"description": "Switches the Quit keybind from CMD + Q to OPT/ALT + F4, like it is on Windows.",
 			"default": false,
 			"requires-restart": true
 		},

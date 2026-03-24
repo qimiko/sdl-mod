@@ -52,6 +52,14 @@ void fix_menu_items() {
 			[item setTarget:updInst];
 			[item setAction:@selector(shutdownGame)];
 
+			if (geode::Mod::get()->getSettingValue<bool>("switch-quit")) {
+				unichar c = NSF4FunctionKey;
+				auto f4 = [NSString stringWithCharacters:&c length:1];
+
+				[item setKeyEquivalent:f4];
+				[item setKeyEquivalentModifierMask:NSEventModifierFlagOption];
+			}
+
 			fixedItem = true;
 			break;
 		}
