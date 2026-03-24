@@ -8,12 +8,6 @@
 #include "platform.h"
 #include "events.h"
 
-// for geode 5.3.0 and below, gameexit event is called during platformshutdown
-// we can't call it twice or it'll crash, but we're also more reliable about calling it on those versions
-// this is slightly hacky. it'll do for now
-// TODO: remove when geode 5.3.1+ releases and min version is increased
-bool exit_already_called = false;
-
 SDLManager& SDLManager::get() {
 	static SDLManager manager;
 	return manager;
@@ -262,9 +256,7 @@ SDL_AppResult SDLCALL my_iterate_callback(void* appstate) {
 }
 
 void SDLCALL my_quit_callback(void *appstate, SDL_AppResult result) {
-	if (!exit_already_called) {
-		geode::GameEvent(geode::GameEventType::Exiting).send();
-	}
+	geode::GameEvent(geode::GameEventType::Exiting).send();
 }
 
 SDL_AppResult SDLCALL my_event_callback(void *appstate, SDL_Event *event) {
@@ -365,8 +357,6 @@ $execute {
 	*/
 
 	geode::GameEvent(geode::GameEventType::Exiting).listen([] {
-		exit_already_called = true;
-
 		platform_shutdown_steam();
 	}).leak();
 }
