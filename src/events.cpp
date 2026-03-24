@@ -122,6 +122,10 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 		"com.robtop.geometrydash-mac"
 	);
 
+	if (geode::Mod::get()->getSettingValue<bool>("p3-color-space")) {
+		SDL_SetHint(SDL_HINT_MAC_OPENGL_FIX_COLORSPACE, "0");
+	}
+
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
 		geode::log::warn("failed to initialize SDL: {}", SDL_GetError());
 		return SDL_APP_FAILURE;

@@ -38,6 +38,10 @@ CPMAddPackage(
     name SDL3
     GITHUB_REPOSITORY libsdl-org/SDL
     GIT_TAG release-3.4.2
+
+    # from https://github.com/libsdl-org/SDL/issues/15059,
+    # this is likely a wontfix but the default behavior is really hard to replicate otherwise
+    PATCHES "cmake/sdl-add-colorspace-hint.patch"
     OPTIONS
         "SDL_AUDIO OFF"
         "SDL_GPU OFF"

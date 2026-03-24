@@ -29,13 +29,6 @@ std::uint64_t get_platform_time_ns() {
 	return clock_gettime_nsec_np(CLOCK_UPTIME_RAW);
 }
 
-void fix_color_space() {
-	auto props = SDL_GetWindowProperties(SDLManager::get().m_window);
-	if (auto nsWindow = reinterpret_cast<NSWindow*>(SDL_GetPointerProperty(props, SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, nullptr))) {
-		[nsWindow setColorSpace:[[nsWindow screen] colorSpace]];
-	}
-}
-
 void fix_menu_items() {
 	// redirect quit to sdl to prevent crash
 	auto mainMenu = [NSApp mainMenu];
@@ -72,9 +65,6 @@ void fix_menu_items() {
 
 void platform_fixes() {
 	fix_menu_items();
-	if (geode::Mod::get()->getSettingValue<bool>("p3-color-space")) {
-		fix_color_space();
-	}
 }
 
 void applicationDidFinishLaunching(void* self, SEL, NSNotification*) {

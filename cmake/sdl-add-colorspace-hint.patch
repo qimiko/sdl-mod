@@ -1,0 +1,41 @@
+diff --git a/include/SDL3/SDL_hints.h b/include/SDL3/SDL_hints.h
+index 0596171b9..b8fffb166 100644
+--- a/include/SDL3/SDL_hints.h
++++ b/include/SDL3/SDL_hints.h
+@@ -2669,6 +2669,21 @@ extern "C" {
+  */
+ #define SDL_HINT_MAC_OPENGL_ASYNC_DISPATCH "SDL_MAC_OPENGL_ASYNC_DISPATCH"
+ 
++/**
++ * A variable that determines if the colorspace for OpenGL windows should be
++ * force set to sRGB during initialization.
++ *
++ * The variable can be set to the following values:
++ *
++ * - "0": The colorspace will be left at its default, which follows the
++ *   current display colorspace.
++ * - "1": The colorspace will be force set to sRGB. (default)
++ *
++ * This hint needs to be set before creating a window.
++ *
++ */
++#define SDL_HINT_MAC_OPENGL_FIX_COLORSPACE "SDL_MAC_OPENGL_FIX_COLORSPACE"
++
+ /**
+  * A variable controlling whether the Option key on macOS should be remapped
+  * to act as the Alt key.
+diff --git a/src/video/cocoa/SDL_cocoawindow.m b/src/video/cocoa/SDL_cocoawindow.m
+index 79c17713e..6536e7ba9 100644
+--- a/src/video/cocoa/SDL_cocoawindow.m
++++ b/src/video/cocoa/SDL_cocoawindow.m
+@@ -2488,7 +2488,9 @@ bool Cocoa_CreateWindow(SDL_VideoDevice *_this, SDL_Window *window, SDL_Properti
+                 return SDL_SetError("%s", [[e reason] UTF8String]);
+             }
+ 
+-            [nswindow setColorSpace:[NSColorSpace sRGBColorSpace]];
++            if (SDL_GetHintBoolean(SDL_HINT_MAC_OPENGL_FIX_COLORSPACE, true)) {
++                [nswindow setColorSpace:[NSColorSpace sRGBColorSpace]];
++            }
+ 
+             [nswindow setTabbingMode:NSWindowTabbingModeDisallowed];
+ 
