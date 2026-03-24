@@ -8,12 +8,6 @@
 #include "platform.h"
 #include "events.h"
 
-#define ENABLE_VKMOD 0
-
-#if ENABLE_VKMOD
-#include "vkmod/Vulkan.hpp"
-#endif
-
 // for geode 5.3.0 and below, gameexit event is called during platformshutdown
 // we can't call it twice or it'll crash, but we're also more reliable about calling it on those versions
 // this is slightly hacky. it'll do for now
@@ -139,7 +133,6 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 		return SDL_APP_FAILURE;
 	}
 
-#if !ENABLE_VKMOD
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
@@ -154,19 +147,8 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 	// we have to request stencil bits, or we won't get them (which breaks clipping nodes)
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-#endif
 
 	auto gameResolution = GameManager::sharedState()->resolutionForKey(GameManager::sharedState()->m_resolution);
-
-#if ENABLE_VKMOD
-	auto lib_path = geode::utils::string::pathToString(geode::Mod::get()->getResourcesDir() / "libMoltenVK.dylib");
-
-	auto lib = dlopen(lib_path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
-	if (!lib) {
-		geode::log::warn("failed to dlopen moltenvk!!!");
-		return SDL_APP_FAILURE;
-	}
-#endif
 
 	auto window_flags = SDL_WINDOW_RESIZABLE;
 
@@ -175,11 +157,7 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 		window_flags |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
 	}
 
-#if ENABLE_VKMOD
-	window_flags |= SDL_WINDOW_VULKAN;
-#else
 	window_flags |= SDL_WINDOW_OPENGL;
-#endif
 
 	auto window_title = geode::Mod::get()->getSettingValue<std::string>("window-title");
 	auto window = SDL_CreateWindow(window_title.c_str(), gameResolution.width, gameResolution.height, window_flags);
@@ -203,7 +181,6 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 	SDL_SetWindowMinimumSize(window, 100, 100);
 	SDL_RaiseWindow(window);
 
-#if !ENABLE_VKMOD
 	if (!SDL_GL_CreateContext(window)) {
 		geode::log::warn("failed to create GL context: {}", SDL_GetError());
 		return SDL_APP_FAILURE;
@@ -231,13 +208,10 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 
 		geode::log::popNest();
 	}
-#endif
 
 	auto disable_swap = geode::Mod::get()->getSettingValue<bool>("disable-vsync");
 
-#if !ENABLE_VKMOD
 	toggle_vsync(disable_swap);
-#endif
 
 	auto uncapFramerate = geode::Mod::get()->getSettingValue<bool>("uncap-framerate");
 	auto targetFramerate = uncapFramerate
@@ -271,10 +245,6 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 
 	cocos2d::CCEGLView::sharedOpenGLView()->setFrameSize(window_w, window_h);
 
-#if ENABLE_VKMOD
-	getRenderer()->init(window);
-#endif
-
 	AppDelegate::get()->applicationDidFinishLaunching();
 
 	return SDL_APP_CONTINUE;
@@ -286,9 +256,7 @@ SDL_AppResult SDLCALL my_iterate_callback(void* appstate) {
 	reinterpret_cast<cocos2d::CCDisplayLinkDirector*>(cocos2d::CCDirector::sharedDirector())
 		->mainLoop();
 
-#if !ENABLE_VKMOD
 	SDL_GL_SwapWindow(appManager->m_window);
-#endif
 
 	return SDL_APP_CONTINUE;
 }
