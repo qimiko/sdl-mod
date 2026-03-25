@@ -91,6 +91,12 @@
 			"description": "Switches the Quit keybind from CMD + Q to OPT/ALT + F4, like it is on Windows.",
 			"default": false,
 			"requires-restart": true
+		},
+		"pause-on-focus-loss": {
+			"type": "bool",
+			"name": "Pause When Entering Background",
+			"description": "Automatically pauses when the game window is no longer active (like when clicking out of the window or using CMD + Tab).",
+			"default": true
 		}
 	}
 }

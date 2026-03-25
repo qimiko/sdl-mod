@@ -3,7 +3,7 @@
 ## v1.0.3
 
 - Add option to switch close shortcut to ALT + F4
-- Reintroduce pausing on focus loss
+- Reintroduce pausing on focus loss. This behavior can be disabled in mod options
 - Fixed "Revert Color Space" to follow the display color space instead of hardcoding one
 
 ## v1.0.2

@@ -435,14 +435,18 @@ bool sdl_on_event(void* appstate, SDL_Event* event) {
 			break;
 		}
 		case SDL_EVENT_WINDOW_FOCUS_LOST:
-			Loader::get()->queueInMainThread([]{
-				// if you wanted to be very realistic, gd appears to call applicationWillEnterBackground if the window is fullscreen
-				// this breaks a lot of stuff here so i'm not calling it, but you could if you wanted to
-				AppDelegate::get()->applicationWillResignActive();
-			});
+			if (SDLManager::get().m_pauseOnFocusLoss) {
+				Loader::get()->queueInMainThread([]{
+					// if you wanted to be very realistic, gd appears to call applicationWillEnterBackground if the window is fullscreen
+					// this breaks a lot of stuff here so i'm not calling it, but you could if you wanted to
+					AppDelegate::get()->applicationWillResignActive();
+				});
+			}
 			break;
 		case SDL_EVENT_WINDOW_FOCUS_GAINED:
 			Loader::get()->queueInMainThread([]{
+				// there is a possible incompat here with mods using this to unpause game, causing this to override manual pauses
+				// otherwise always calling is fine i think, and safer in case someone disables the option while paused
 				AppDelegate::get()->applicationWillBecomeActive();
 			});
 			break;

@@ -30,6 +30,8 @@ public:
 	bool m_mouseDown = false;
 	bool m_backDown = false;
 
+	bool m_pauseOnFocusLoss = false;
+
 	static SDLManager& get();
 
 	void reset_controller_keys();
