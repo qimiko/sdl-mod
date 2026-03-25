@@ -51,13 +51,6 @@
 			"default": false,
 			"requires-restart": true
 		},
-		"switch-quit": {
-			"type": "bool",
-			"name": "Windows-Style Quit Keybind",
-			"description": "Switches the Quit keybind from CMD + Q to OPT/ALT + F4, like it is on Windows.",
-			"default": false,
-			"requires-restart": true
-		},
 		"category-visual": {
 			"type": "title",
 			"name": "Visual"
@@ -82,11 +75,22 @@
 			"default": false,
 			"requires-restart": true
 		},
+		"category-input": {
+			"type": "title",
+			"name": "Input"
+		},
 		"use-ime": {
 			"type": "bool",
 			"name": "Enable IME",
 			"description": "Uses SDL's <cl>IME capabilities</c> for text inputs, which makes it possible to enter specific <cc>special characters</c> into text fields. Some mods may not handle this correctly.",
 			"default": true
+		},
+		"switch-quit": {
+			"type": "bool",
+			"name": "Windows-Style Quit Keybind",
+			"description": "Switches the Quit keybind from CMD + Q to OPT/ALT + F4, like it is on Windows.",
+			"default": false,
+			"requires-restart": true
 		}
 	}
 }
