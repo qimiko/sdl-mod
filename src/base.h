@@ -32,6 +32,8 @@ public:
 
 	bool m_pauseOnFocusLoss = false;
 
+	bool m_keyInsteadOfScan = false;
+
 	static SDLManager& get();
 
 	void reset_controller_keys();

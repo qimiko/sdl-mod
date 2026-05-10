@@ -1,5 +1,5 @@
 {
-	"geode": "5.4.0",
+	"geode": "5.7.1",
 	"gd": {
 		"mac": "2.2081"
 	},
@@ -11,7 +11,7 @@
 	"early-load": true,
 	"tags": ["interface", "bugfix", "enhancement", "universal", "performance", "offline"],
 	"links": {
-		"source": "https://github.com/qimiko/sdl-mod"
+		"source": "https://codeberg.org/qimiko/sdl-mod"
 	},
 	"settings": {
 		"category-performance": {
@@ -97,6 +97,12 @@
 			"name": "Pause When Entering Background",
 			"description": "Automatically pauses when the game window is no longer active (like when clicking out of the window or using CMD + Tab).",
 			"default": true
+		},
+		"key-instead-of-scan": {
+			"type": "bool",
+			"name": "Follow Keyboard Layout for Keybinds",
+			"description": "Causes keybinds to correspond with the mappings of the <cd>current keyboard layout</c>, as opposed to their locations on a <co>QWERTY keyboard</c>.\n\nWith this option enabled, the glyphs shown for keybinds <cj>will match</c> their labels on your keyboard. However, this <cr>does not follow</c> vanilla behavior (or possibly your own expectations).\n\nNote that text inputs are <cs>unaffected</c> by this option.",
+			"default": false
 		}
 	}
 }

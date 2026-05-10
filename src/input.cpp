@@ -92,10 +92,11 @@ void on_mouse_move(SDL_MouseMotionEvent& event) {
 }
 
 void on_key_event(SDL_KeyboardEvent& event) {
-	auto rawKeycode = event.key;
-
 	// auto sdlKeycode = SDL_GetKeyFromScancode(event.scancode, event.mod, true);
-	auto keyCode = translate_keycode(rawKeycode);
+	auto keyCode = SDLManager::get().m_keyInsteadOfScan
+		? translate_keycode(event.key)
+		: translate_scancode(event.scancode);
+
 	auto timestamp = translate_timestamp(event.timestamp);
 
 	auto modifiers = modifiers_from_keymod(event.mod);

@@ -223,6 +223,7 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 	SDLManager::get().m_unlockAspectRatio = unlockAspectRatio;
 
 	SDLManager::get().m_pauseOnFocusLoss = geode::Mod::get()->getSettingValue<bool>("pause-on-focus-loss");
+	SDLManager::get().m_keyInsteadOfScan = geode::Mod::get()->getSettingValue<bool>("key-instead-of-scan");
 
 	if (!unlockAspectRatio) {
 		auto targetAspect = gameResolution.width / gameResolution.height;
@@ -364,6 +365,10 @@ $execute {
 
 	geode::listenForSettingChanges<bool>("pause-on-focus-loss", [](bool enabled) {
 		SDLManager::get().m_pauseOnFocusLoss = enabled;
+	});
+
+	geode::listenForSettingChanges<bool>("key-instead-of-scan", [](bool enabled) {
+		SDLManager::get().m_keyInsteadOfScan = enabled;
 	});
 
 	geode::GameEvent(geode::GameEventType::Exiting).listen([] {
