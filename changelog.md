@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.4
+
+- Fixed keybinds on non-QWERTY keyboard layouts. The previous (incorrect) behavior can be enabled in the mod options.
+- Update SDL to 3.4.8
+
 ## v1.0.3
 
 - Add option to switch close shortcut to ALT + F4
