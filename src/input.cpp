@@ -123,8 +123,8 @@ void on_key_event(SDL_KeyboardEvent& event) {
 	Loader::get()->queueInMainThread([data = std::move(data), fullKeyCode] mutable {
 		if (KeyboardInputEvent(data.key).send(data) != ListenerResult::Propagate) return;
 
-    auto imeDispatcher = CCIMEDispatcher::sharedDispatcher();
-    auto keyboardDispatcher = CCKeyboardDispatcher::get();
+		auto imeDispatcher = CCIMEDispatcher::sharedDispatcher();
+		auto keyboardDispatcher = CCKeyboardDispatcher::get();
 
 		auto timestamp = data.timestamp;
 		auto isDown = data.action != KeyboardInputData::Action::Release;
@@ -136,12 +136,12 @@ void on_key_event(SDL_KeyboardEvent& event) {
 			keyboardDispatcher->dispatchKeyboardMSG(keyCode, isDown, isRepeat, timestamp);
 		}
 
-    keyboardDispatcher->updateModifierKeys(
+		keyboardDispatcher->updateModifierKeys(
 			modifiers & KeyboardModifier::Shift,
 			modifiers & KeyboardModifier::Control,
 			modifiers & KeyboardModifier::Alt,
 			modifiers & KeyboardModifier::Super
-    );
+		);
 
 		if (data.action != KeyboardInputData::Action::Press && data.action != KeyboardInputData::Action::Repeat) return;
 
@@ -184,7 +184,7 @@ void on_wheel_event(SDL_MouseWheelEvent& event) {
 	Loader::get()->queueInMainThread([x, y] {
 		if (ScrollWheelEvent().send(x, y) != ListenerResult::Propagate) return;
 
-    cocos2d::CCDirector::sharedDirector()->getMouseDispatcher()->dispatchScrollMSG(y, x);
+		cocos2d::CCDirector::sharedDirector()->getMouseDispatcher()->dispatchScrollMSG(y, x);
 	});
 }
 
@@ -204,8 +204,8 @@ void dispatch_keypad_event(double timestamp, cocos2d::enumKeyCodes keyCode, bool
 	Loader::get()->queueInMainThread([data = std::move(data)] mutable {
 		if (KeyboardInputEvent(data.key).send(data) != ListenerResult::Propagate) return;
 
-    auto imeDispatcher = CCIMEDispatcher::sharedDispatcher();
-    auto keyboardDispatcher = CCKeyboardDispatcher::get();
+		auto imeDispatcher = CCIMEDispatcher::sharedDispatcher();
+		auto keyboardDispatcher = CCKeyboardDispatcher::get();
 
 		auto timestamp = data.timestamp;
 		auto isDown = data.action != KeyboardInputData::Action::Release;
@@ -217,12 +217,12 @@ void dispatch_keypad_event(double timestamp, cocos2d::enumKeyCodes keyCode, bool
 			keyboardDispatcher->dispatchKeyboardMSG(keyCode, isDown, isRepeat, timestamp);
 		}
 
-    keyboardDispatcher->updateModifierKeys(
+		keyboardDispatcher->updateModifierKeys(
 			modifiers & KeyboardModifier::Shift,
 			modifiers & KeyboardModifier::Control,
 			modifiers & KeyboardModifier::Alt,
 			modifiers & KeyboardModifier::Super
-    );
+		);
 	});
 }
 
@@ -418,7 +418,7 @@ bool sdl_on_event(void* appstate, SDL_Event* event) {
 			}
 			break;
 		}
-    case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN: {
+		case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN: {
 			auto exclusive_fullscreen = geode::Mod::get()->getSettingValue<bool>("exclusive-fullscreen");
 			if (!exclusive_fullscreen) {
 				Loader::get()->queueInMainThread([] {
