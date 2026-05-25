@@ -254,6 +254,10 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 SDL_AppResult SDLCALL my_iterate_callback(void* appstate) {
 	auto appManager = reinterpret_cast<SDLManager*>(appstate);
 
+	if (appManager->m_stopped) {
+		return SDL_APP_SUCCESS;
+	}
+
 	reinterpret_cast<cocos2d::CCDisplayLinkDirector*>(cocos2d::CCDirector::sharedDirector())
 		->mainLoop();
 
