@@ -59,7 +59,7 @@
 			"type": "string",
 			"name": "Window Title",
 			"description": "Geometry dsash",
-			"default": "Geometry Dash*"
+			"default": "Geometry Dash"
 		},
 		"p3-color-space": {
 			"type": "bool",
