@@ -237,12 +237,20 @@ void on_gamepad_button(SDL_GamepadButtonEvent& event) {
 		SDLManager::get().m_backDown = down;
 	}
 
+	if (SDL_GetGamepadPlayerIndexForID(event.which) > 0) {
+		keyCode = static_cast<cocos2d::enumKeyCodes>(static_cast<int>(keyCode) + 1);
+	}
+
 	dispatch_keypad_event(timestamp, keyCode, down, event.button);
 }
 
 std::unordered_map<cocos2d::enumKeyCodes, bool> running_axes{};
 
-void handle_trigger(cocos2d::enumKeyCodes key, std::int16_t value, double timestamp) {
+void handle_trigger(cocos2d::enumKeyCodes key, std::int16_t value, double timestamp, bool with_offset) {
+	if (with_offset) {
+		key = static_cast<cocos2d::enumKeyCodes>(static_cast<int>(key) + 1);
+	}
+
 	auto is_down = value >= (SDL_JOYSTICK_AXIS_MAX * 0.11);
 	auto current_value = running_axes[key];
 
@@ -266,7 +274,12 @@ std::int8_t normalized_value_for_axis(std::int16_t value) {
 	return 0;
 }
 
-void handle_stick(cocos2d::enumKeyCodes pos_key, cocos2d::enumKeyCodes neg_key, std::int16_t value, double timestamp) {
+void handle_stick(cocos2d::enumKeyCodes pos_key, cocos2d::enumKeyCodes neg_key, std::int16_t value, double timestamp, bool with_offset) {
+	if (with_offset) {
+		pos_key = static_cast<cocos2d::enumKeyCodes>(static_cast<int>(pos_key) + 1);
+		neg_key = static_cast<cocos2d::enumKeyCodes>(static_cast<int>(neg_key) + 1);
+	}
+
 	auto state = normalized_value_for_axis(value);
 
 	bool neg_value = state < 0;
@@ -286,12 +299,14 @@ void handle_stick(cocos2d::enumKeyCodes pos_key, cocos2d::enumKeyCodes neg_key, 
 void on_gamepad_axis(SDL_GamepadAxisEvent& event) {
 	auto timestamp = translate_timestamp(event.timestamp);
 
+	auto keyCodeOffset = SDL_GetGamepadPlayerIndexForID(event.which) > 0;
+
 	switch (event.axis) {
 		case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
-			handle_trigger(CONTROLLER_LT, event.value, timestamp);
+			handle_trigger(CONTROLLER_LT, event.value, timestamp, keyCodeOffset);
 			break;
 		case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
-			handle_trigger(CONTROLLER_RT, event.value, timestamp);
+			handle_trigger(CONTROLLER_RT, event.value, timestamp, keyCodeOffset);
 			break;
 
 		case SDL_GAMEPAD_AXIS_LEFTX:
@@ -301,7 +316,7 @@ void on_gamepad_axis(SDL_GamepadAxisEvent& event) {
 				SDLManager::get().m_cursorHorizontal = 0.0f;
 			}
 
-			handle_stick(CONTROLLER_LTHUMBSTICK_RIGHT, CONTROLLER_LTHUMBSTICK_LEFT, event.value, timestamp);
+			handle_stick(CONTROLLER_LTHUMBSTICK_RIGHT, CONTROLLER_LTHUMBSTICK_LEFT, event.value, timestamp, keyCodeOffset);
 			break;
 		case SDL_GAMEPAD_AXIS_LEFTY:
 			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*0.05) {
@@ -310,7 +325,7 @@ void on_gamepad_axis(SDL_GamepadAxisEvent& event) {
 				SDLManager::get().m_cursorVertical = 0.0f;
 			}
 
-			handle_stick(CONTROLLER_LTHUMBSTICK_DOWN, CONTROLLER_LTHUMBSTICK_UP, event.value, timestamp);
+			handle_stick(CONTROLLER_LTHUMBSTICK_DOWN, CONTROLLER_LTHUMBSTICK_UP, event.value, timestamp, keyCodeOffset);
 			break;
 
 		case SDL_GAMEPAD_AXIS_RIGHTX:
@@ -320,7 +335,7 @@ void on_gamepad_axis(SDL_GamepadAxisEvent& event) {
 				SDLManager::get().m_scrollHorizontal = 0.0f;
 			}
 
-			handle_stick(CONTROLLER_RTHUMBSTICK_RIGHT, CONTROLLER_RTHUMBSTICK_LEFT, event.value, timestamp);
+			handle_stick(CONTROLLER_RTHUMBSTICK_RIGHT, CONTROLLER_RTHUMBSTICK_LEFT, event.value, timestamp, keyCodeOffset);
 			break;
 		case SDL_GAMEPAD_AXIS_RIGHTY:
 			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*0.05) {
@@ -329,7 +344,7 @@ void on_gamepad_axis(SDL_GamepadAxisEvent& event) {
 				SDLManager::get().m_scrollVertical = 0.0f;
 			}
 
-			handle_stick(CONTROLLER_RTHUMBSTICK_DOWN, CONTROLLER_RTHUMBSTICK_UP, event.value, timestamp);
+			handle_stick(CONTROLLER_RTHUMBSTICK_DOWN, CONTROLLER_RTHUMBSTICK_UP, event.value, timestamp, keyCodeOffset);
 			break;
 	}
 }
