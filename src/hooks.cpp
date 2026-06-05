@@ -9,6 +9,9 @@
 #include <Geode/modify/CCTextFieldTTF.hpp>
 #include <Geode/modify/CCEGLView.hpp>
 #include <Geode/modify/PlayLayer.hpp>
+#include <Geode/modify/CCKeyboardDispatcher.hpp>
+
+#include "keymap.h"
 
 struct $modify(PlatformToolbox) {
 	static void showCursor() {
@@ -126,5 +129,48 @@ struct $modify(PlayLayer) {
 		}
 
 		PlayLayer::resumeAndRestart(p1);
+	}
+};
+
+struct $modify(cocos2d::CCKeyboardDispatcher) {
+	const char* keyToString(cocos2d::enumKeyCodes key) {
+		switch (static_cast<ExtraEnumKeyCodes>(key)) {
+			case ExtraEnumKeyCodes::Controller_L3: return "Controller_L3";
+			case ExtraEnumKeyCodes::Controller2_L3: return "Controller2_L3";
+			case ExtraEnumKeyCodes::Controller_R3: return "Controller_R3";
+			case ExtraEnumKeyCodes::Controller2_R3: return "Controller2_R3";
+
+			case ExtraEnumKeyCodes::Controller_Misc1: return "Controller_Misc1";
+			case ExtraEnumKeyCodes::Controller2_Misc1: return "Controller2_Misc1";
+			case ExtraEnumKeyCodes::Controller_Misc2: return "Controller_Misc2";
+			case ExtraEnumKeyCodes::Controller2_Misc2: return "Controller2_Misc2";
+			case ExtraEnumKeyCodes::Controller_Misc3: return "Controller_Misc3";
+			case ExtraEnumKeyCodes::Controller2_Misc3: return "Controller2_Misc3";
+			case ExtraEnumKeyCodes::Controller_Misc4: return "Controller_Misc4";
+			case ExtraEnumKeyCodes::Controller2_Misc4: return "Controller2_Misc4";
+			case ExtraEnumKeyCodes::Controller_Misc5: return "Controller_Misc5";
+			case ExtraEnumKeyCodes::Controller2_Misc5: return "Controller2_Misc5";
+			case ExtraEnumKeyCodes::Controller_Misc6: return "Controller_Misc6";
+			case ExtraEnumKeyCodes::Controller2_Misc6: return "Controller2_Misc6";
+			case ExtraEnumKeyCodes::Controller_RightPaddle1: return "Controller_RightPaddle1";
+			case ExtraEnumKeyCodes::Controller2_RightPaddle1: return "Controller2_RightPaddle1";
+			case ExtraEnumKeyCodes::Controller_LeftPaddle1: return "Controller_LeftPaddle1";
+			case ExtraEnumKeyCodes::Controller2_LeftPaddle1: return "Controller2_LeftPaddle1";
+			case ExtraEnumKeyCodes::Controller_RightPaddle2: return "Controller_RightPaddle2";
+			case ExtraEnumKeyCodes::Controller2_RightPaddle2: return "Controller2_RightPaddle2";
+			case ExtraEnumKeyCodes::Controller_LeftPaddle2: return "Controller_LeftPaddle2";
+			case ExtraEnumKeyCodes::Controller2_LeftPaddle2: return "Controller2_LeftPaddle2";
+			case ExtraEnumKeyCodes::Controller_Touchpad: return "Controller_Touchpad";
+			case ExtraEnumKeyCodes::Controller2_Touchpad: return "Controller2_Touchpad";
+			case ExtraEnumKeyCodes::Controller_Guide: return "Controller_Guide";
+			case ExtraEnumKeyCodes::Controller2_Guide: return "Controller2_Guide";
+			default: return CCKeyboardDispatcher::keyToString(key);
+		}
+	}
+
+	static void onModify(auto& self) {
+		if (!self.setHookPriorityBeforePre("cocos2d::CCKeyboardDispatcher::keyToString", "geode.loader")) {
+			geode::log::warn("Failed to set hook priority.");
+		}
 	}
 };

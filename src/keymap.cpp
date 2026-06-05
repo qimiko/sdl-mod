@@ -583,6 +583,36 @@ cocos2d::enumKeyCodes translate_gamepad_button(SDL_GamepadButton button) {
 		case SDL_GAMEPAD_BUTTON_DPAD_LEFT: return CONTROLLER_Left;
 		case SDL_GAMEPAD_BUTTON_DPAD_RIGHT: return CONTROLLER_Right;
 
+		case SDL_GAMEPAD_BUTTON_LEFT_STICK:
+			return static_cast<cocos2d::enumKeyCodes>(ExtraEnumKeyCodes::Controller_L3);
+		case SDL_GAMEPAD_BUTTON_RIGHT_STICK:
+			return static_cast<cocos2d::enumKeyCodes>(ExtraEnumKeyCodes::Controller_R3);
+
+		case SDL_GAMEPAD_BUTTON_GUIDE:
+			return static_cast<cocos2d::enumKeyCodes>(ExtraEnumKeyCodes::Controller_Guide);
+		case SDL_GAMEPAD_BUTTON_MISC1:
+			return static_cast<cocos2d::enumKeyCodes>(ExtraEnumKeyCodes::Controller_Misc1);
+    case SDL_GAMEPAD_BUTTON_RIGHT_PADDLE1:
+			return static_cast<cocos2d::enumKeyCodes>(ExtraEnumKeyCodes::Controller_RightPaddle1);
+		case SDL_GAMEPAD_BUTTON_LEFT_PADDLE1:
+			return static_cast<cocos2d::enumKeyCodes>(ExtraEnumKeyCodes::Controller_LeftPaddle1);
+    case SDL_GAMEPAD_BUTTON_RIGHT_PADDLE2:
+			return static_cast<cocos2d::enumKeyCodes>(ExtraEnumKeyCodes::Controller_RightPaddle2);
+    case SDL_GAMEPAD_BUTTON_LEFT_PADDLE2:
+			return static_cast<cocos2d::enumKeyCodes>(ExtraEnumKeyCodes::Controller_LeftPaddle2);
+    case SDL_GAMEPAD_BUTTON_TOUCHPAD:
+			return static_cast<cocos2d::enumKeyCodes>(ExtraEnumKeyCodes::Controller_Touchpad);
+    case SDL_GAMEPAD_BUTTON_MISC2:
+			return static_cast<cocos2d::enumKeyCodes>(ExtraEnumKeyCodes::Controller_Misc2);
+    case SDL_GAMEPAD_BUTTON_MISC3:
+			return static_cast<cocos2d::enumKeyCodes>(ExtraEnumKeyCodes::Controller_Misc3);
+    case SDL_GAMEPAD_BUTTON_MISC4:
+			return static_cast<cocos2d::enumKeyCodes>(ExtraEnumKeyCodes::Controller_Misc4);
+    case SDL_GAMEPAD_BUTTON_MISC5:
+			return static_cast<cocos2d::enumKeyCodes>(ExtraEnumKeyCodes::Controller_Misc5);
+    case SDL_GAMEPAD_BUTTON_MISC6:
+			return static_cast<cocos2d::enumKeyCodes>(ExtraEnumKeyCodes::Controller_Misc6);
+
 		case SDL_GAMEPAD_BUTTON_INVALID:
 		default: return KEY_Unknown;
 	}
