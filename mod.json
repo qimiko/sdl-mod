@@ -103,6 +103,20 @@
 			"name": "Follow Keyboard Layout for Keybinds",
 			"description": "Causes keybinds to correspond with the mappings of the <cd>current keyboard layout</c>, as opposed to their locations on a <co>QWERTY keyboard</c>.\n\nWith this option enabled, the glyphs shown for keybinds <cj>will match</c> their labels on your keyboard. However, this <cr>does not follow</c> vanilla behavior (or possibly your own expectations).\n\nNote that text inputs are <cs>unaffected</c> by this option.",
 			"default": false
+		},
+		"mouse-controller-deadzone": {
+			"type": "float",
+			"name": "Controller Mouse Controls Deadzone",
+			"description": "Determines the minimum percentage of the joystick that has to be pressed in order to move the cursor. Increase this value if you experience drift while using a controller.",
+			"min": 0.0,
+			"max": 1.0,
+			"default": 0.1,
+			"control": {
+				"arrows": false,
+				"slider": true,
+				"slider-step": 0.01,
+				"input": true
+			}
 		}
 	}
 }

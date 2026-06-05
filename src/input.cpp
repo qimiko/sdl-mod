@@ -301,6 +301,8 @@ void on_gamepad_axis(SDL_GamepadAxisEvent& event) {
 
 	auto keyCodeOffset = SDL_GetGamepadPlayerIndexForID(event.which) > 0;
 
+	auto deadzone = SDLManager::get().m_mouseControlsDeadzone;
+
 	switch (event.axis) {
 		case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
 			handle_trigger(CONTROLLER_LT, event.value, timestamp, keyCodeOffset);
@@ -310,7 +312,7 @@ void on_gamepad_axis(SDL_GamepadAxisEvent& event) {
 			break;
 
 		case SDL_GAMEPAD_AXIS_LEFTX:
-			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*0.05) {
+			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*deadzone) {
 				SDLManager::get().m_cursorHorizontal = event.value / static_cast<float>(SDL_JOYSTICK_AXIS_MAX);
 			} else {
 				SDLManager::get().m_cursorHorizontal = 0.0f;
@@ -319,7 +321,7 @@ void on_gamepad_axis(SDL_GamepadAxisEvent& event) {
 			handle_stick(CONTROLLER_LTHUMBSTICK_RIGHT, CONTROLLER_LTHUMBSTICK_LEFT, event.value, timestamp, keyCodeOffset);
 			break;
 		case SDL_GAMEPAD_AXIS_LEFTY:
-			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*0.05) {
+			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*deadzone) {
 				SDLManager::get().m_cursorVertical = event.value / static_cast<float>(SDL_JOYSTICK_AXIS_MAX);
 			} else {
 				SDLManager::get().m_cursorVertical = 0.0f;
@@ -329,7 +331,7 @@ void on_gamepad_axis(SDL_GamepadAxisEvent& event) {
 			break;
 
 		case SDL_GAMEPAD_AXIS_RIGHTX:
-			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*0.05) {
+			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*deadzone) {
 				SDLManager::get().m_scrollHorizontal = event.value / static_cast<float>(SDL_JOYSTICK_AXIS_MAX);
 			} else {
 				SDLManager::get().m_scrollHorizontal = 0.0f;
@@ -338,7 +340,7 @@ void on_gamepad_axis(SDL_GamepadAxisEvent& event) {
 			handle_stick(CONTROLLER_RTHUMBSTICK_RIGHT, CONTROLLER_RTHUMBSTICK_LEFT, event.value, timestamp, keyCodeOffset);
 			break;
 		case SDL_GAMEPAD_AXIS_RIGHTY:
-			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*0.05) {
+			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*deadzone) {
 				SDLManager::get().m_scrollVertical = event.value / static_cast<float>(SDL_JOYSTICK_AXIS_MAX);
 			} else {
 				SDLManager::get().m_scrollVertical = 0.0f;

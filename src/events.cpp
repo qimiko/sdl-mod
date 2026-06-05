@@ -225,6 +225,8 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 	SDLManager::get().m_pauseOnFocusLoss = geode::Mod::get()->getSettingValue<bool>("pause-on-focus-loss");
 	SDLManager::get().m_keyInsteadOfScan = geode::Mod::get()->getSettingValue<bool>("key-instead-of-scan");
 
+	SDLManager::get().m_mouseControlsDeadzone = geode::Mod::get()->getSettingValue<float>("mouse-controller-deadzone");
+
 	if (!unlockAspectRatio) {
 		auto targetAspect = gameResolution.width / gameResolution.height;
 		SDL_SetWindowAspectRatio(window, targetAspect, targetAspect);
@@ -373,6 +375,10 @@ $execute {
 
 	geode::listenForSettingChanges<bool>("key-instead-of-scan", [](bool enabled) {
 		SDLManager::get().m_keyInsteadOfScan = enabled;
+	});
+
+	geode::listenForSettingChanges<float>("mouse-controller-deadzone", [](float value) {
+		SDLManager::get().m_mouseControlsDeadzone = value;
 	});
 
 	geode::GameEvent(geode::GameEventType::Exiting).listen([] {
