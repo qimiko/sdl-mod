@@ -3,6 +3,7 @@
 ## v1.0.5
 
 - Implemented support for 2nd controller keybinds
+- Fixed an issue that broke mouse position with Infinite Inputs while the cursor is locked
 - Added keybind mappings for the additional controller buttons that SDL offers, like back buttons
 - Added option to increase the deadzone for mouse controls
 - Update SDL to 3.4.10

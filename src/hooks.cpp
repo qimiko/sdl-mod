@@ -19,6 +19,7 @@ struct $modify(PlatformToolbox) {
 
 		SDL_ShowCursor();
 		SDL_SetWindowRelativeMouseMode(SDLManager::get().m_window, false);
+		SDL_SetWindowMouseRect(SDLManager::get().m_window, nullptr);
 	}
 
 	static void hideCursor() {
@@ -93,6 +94,32 @@ struct $modify(cocos2d::CCEGLView) {
 };
 
 void enableLockCursor() {
+	static bool infiniteInputsWorkaround = geode::Loader::get()->isModLoaded("iandyhd3.infinite_inputs");
+	if (infiniteInputsWorkaround) {
+		// mod compatibility fix: window relative mouse mode forces the mouse to the center of the screen
+		// the solution in the infinite inputs mod is to simply not lock the cursor when a level has mouse events but we don't know that information...
+
+		SDLManager::get().m_cursorHidden = true;
+
+		SDL_HideCursor();
+
+		// avoid clicking on window borders
+		auto windowed = GameManager::sharedState()->getGameVariable(GameVar::WindowedMode);
+		int w, h;
+		SDL_GetWindowSize(SDLManager::get().m_window, &w, &h);
+
+		auto windowPadding = windowed ? 11 : 0;
+		SDL_Rect coords{
+			0 + windowPadding,
+			0 + windowPadding,
+			w - (windowPadding * 2),
+			h - (windowPadding * 2)
+		};
+		SDL_SetWindowMouseRect(SDLManager::get().m_window, &coords);
+
+		return;
+	}
+
 	SDLManager::get().m_cursorHidden = true;
 
 	SDL_SetWindowRelativeMouseMode(SDLManager::get().m_window, true);
