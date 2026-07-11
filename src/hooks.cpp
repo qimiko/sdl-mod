@@ -162,11 +162,6 @@ struct $modify(PlayLayer) {
 struct $modify(cocos2d::CCKeyboardDispatcher) {
 	const char* keyToString(cocos2d::enumKeyCodes key) {
 		switch (static_cast<ExtraEnumKeyCodes>(key)) {
-			case ExtraEnumKeyCodes::Controller_L3: return "Controller_L3";
-			case ExtraEnumKeyCodes::Controller2_L3: return "Controller2_L3";
-			case ExtraEnumKeyCodes::Controller_R3: return "Controller_R3";
-			case ExtraEnumKeyCodes::Controller2_R3: return "Controller2_R3";
-
 			case ExtraEnumKeyCodes::Controller_Misc1: return "Controller_Misc1";
 			case ExtraEnumKeyCodes::Controller2_Misc1: return "Controller2_Misc1";
 			case ExtraEnumKeyCodes::Controller_Misc2: return "Controller_Misc2";

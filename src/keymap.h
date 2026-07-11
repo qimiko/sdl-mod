@@ -11,12 +11,6 @@ cocos2d::enumKeyCodes translate_scancode(SDL_Scancode code);
 cocos2d::enumKeyCodes translate_gamepad_button(SDL_GamepadButton button);
 
 enum class ExtraEnumKeyCodes {
-	// thumbstick buttons are part of geode v5.7.2+
-	Controller_L3 = 0x1201,
-	Controller2_L3 = 0x1202,
-	Controller_R3 = 0x1203,
-	Controller2_R3 = 0x1204,
-
 	Controller_Misc1 = 0x1551,
 	Controller2_Misc1 = 0x1552,
 	Controller_Misc2 = 0x1553,
