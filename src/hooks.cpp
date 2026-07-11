@@ -27,6 +27,16 @@ struct $modify(PlatformToolbox) {
 
 		SDL_HideCursor();
 	}
+
+	static void onModify(auto& self) {
+		if (GEODE_UNWRAP_IF_ERR(err, self.setHookPriority("PlatformToolbox::showCursor", geode::Priority::Replace))) {
+			geode::log::warn("Failed to set hook priority for PlatformToolbox::showCursor: {}", err);
+		}
+
+		if (GEODE_UNWRAP_IF_ERR(err, self.setHookPriority("PlatformToolbox::hideCursor", geode::Priority::Replace))) {
+			geode::log::warn("Failed to set hook priority for PlatformToolbox::hideCursor: {}", err);
+		}
+	}
 };
 
 SDL_Rect s_imeCandidate{};
