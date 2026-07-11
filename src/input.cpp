@@ -303,6 +303,10 @@ void on_gamepad_axis(SDL_GamepadAxisEvent& event) {
 
 	auto deadzone = SDLManager::get().m_mouseControlsDeadzone;
 
+#define UPDATE_MOUSE_CONTROLS(var) if (!keyCodeOffset) { \
+	if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*deadzone) SDLManager::get().var = event.value / static_cast<float>(SDL_JOYSTICK_AXIS_MAX); \
+	else SDLManager::get().var = 0.0f; }
+
 	switch (event.axis) {
 		case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
 			handle_trigger(CONTROLLER_LT, event.value, timestamp, keyCodeOffset);
@@ -312,43 +316,29 @@ void on_gamepad_axis(SDL_GamepadAxisEvent& event) {
 			break;
 
 		case SDL_GAMEPAD_AXIS_LEFTX:
-			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*deadzone) {
-				SDLManager::get().m_cursorHorizontal = event.value / static_cast<float>(SDL_JOYSTICK_AXIS_MAX);
-			} else {
-				SDLManager::get().m_cursorHorizontal = 0.0f;
-			}
+			UPDATE_MOUSE_CONTROLS(m_cursorHorizontal)
 
 			handle_stick(CONTROLLER_LTHUMBSTICK_RIGHT, CONTROLLER_LTHUMBSTICK_LEFT, event.value, timestamp, keyCodeOffset);
 			break;
 		case SDL_GAMEPAD_AXIS_LEFTY:
-			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*deadzone) {
-				SDLManager::get().m_cursorVertical = event.value / static_cast<float>(SDL_JOYSTICK_AXIS_MAX);
-			} else {
-				SDLManager::get().m_cursorVertical = 0.0f;
-			}
+			UPDATE_MOUSE_CONTROLS(m_cursorVertical)
 
 			handle_stick(CONTROLLER_LTHUMBSTICK_DOWN, CONTROLLER_LTHUMBSTICK_UP, event.value, timestamp, keyCodeOffset);
 			break;
 
 		case SDL_GAMEPAD_AXIS_RIGHTX:
-			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*deadzone) {
-				SDLManager::get().m_scrollHorizontal = event.value / static_cast<float>(SDL_JOYSTICK_AXIS_MAX);
-			} else {
-				SDLManager::get().m_scrollHorizontal = 0.0f;
-			}
+			UPDATE_MOUSE_CONTROLS(m_scrollHorizontal)
 
 			handle_stick(CONTROLLER_RTHUMBSTICK_RIGHT, CONTROLLER_RTHUMBSTICK_LEFT, event.value, timestamp, keyCodeOffset);
 			break;
 		case SDL_GAMEPAD_AXIS_RIGHTY:
-			if (std::abs(event.value) > SDL_JOYSTICK_AXIS_MAX*deadzone) {
-				SDLManager::get().m_scrollVertical = event.value / static_cast<float>(SDL_JOYSTICK_AXIS_MAX);
-			} else {
-				SDLManager::get().m_scrollVertical = 0.0f;
-			}
+			UPDATE_MOUSE_CONTROLS(m_scrollVertical)
 
 			handle_stick(CONTROLLER_RTHUMBSTICK_DOWN, CONTROLLER_RTHUMBSTICK_UP, event.value, timestamp, keyCodeOffset);
 			break;
 	}
+
+#undef UPDATE_MOUSE_CONTROLS
 }
 
 void handle_resize(SDL_WindowEvent& event) {
