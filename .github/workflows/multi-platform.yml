@@ -23,5 +23,11 @@ jobs:
 
       - name: Build the mod
         uses: geode-sdk/build-geode-mod@main
+        id: build
         with:
           target: ${{ matrix.config.target }}
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Build Output
+          path: ${{ steps.build.outputs.output }}/*.geode
