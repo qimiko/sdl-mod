@@ -24,19 +24,4 @@ jobs:
       - name: Build the mod
         uses: geode-sdk/build-geode-mod@main
         with:
-          combine: true
           target: ${{ matrix.config.target }}
-
-  package:
-    name: Package builds
-    runs-on: ubuntu-latest
-    needs: ['build']
-
-    steps:
-      - uses: geode-sdk/build-geode-mod/combine@main
-        id: build
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: Build Output
-          path: ${{ steps.build.outputs.build-output }}
