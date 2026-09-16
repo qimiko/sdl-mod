@@ -170,9 +170,9 @@ static id s_sharedAppController;
 
 -(cocos2d::CCSize) getDisplaySize {
 	auto window = SDLManager::get().m_window;
-	int width, height;
-	SDL_GetWindowSizeInPixels(window, &width, &height);
-	return {static_cast<float>(width), static_cast<float>(height)};
+	auto mode = SDL_GetCurrentDisplayMode(SDL_GetDisplayForWindow(window));
+
+	return {static_cast<float>(mode->w), static_cast<float>(mode->h)};
 }
 
 -(void) dispatchQueuedEvents {}
