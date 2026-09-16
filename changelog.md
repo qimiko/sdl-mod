@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.6
+
+- Fixed resolutions list in the graphics options only allowing up to the game window's size
+
 ## v1.0.5
 
 - Implemented support for 2nd controller keybinds
