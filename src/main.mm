@@ -169,9 +169,11 @@ static id s_sharedAppController;
 }
 
 -(cocos2d::CCSize) getDisplaySize {
+	// GameManager may call getDisplaySize prior to window creation
 	auto window = SDLManager::get().m_window;
-	auto mode = SDL_GetCurrentDisplayMode(SDL_GetDisplayForWindow(window));
+	auto display = window ? SDL_GetDisplayForWindow(window) : SDL_GetPrimaryDisplay();
 
+	auto mode = SDL_GetCurrentDisplayMode(display);
 	return {static_cast<float>(mode->w), static_cast<float>(mode->h)};
 }
 
