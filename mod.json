@@ -117,6 +117,20 @@
 				"slider-step": 0.01,
 				"input": true
 			}
+		},
+		"horizontal-scroll-speed": {
+			"type": "float",
+			"name": "Horizontal Scroll Speed",
+			"description": "Speed modifier for horizontal scrolling. Stacks with the vanilla scroll setting.",
+			"min": 0.5,
+			"max": 3.0,
+			"default": 1.0,
+			"control": {
+				"arrows": false,
+				"slider": true,
+				"slider-step": 0.01,
+				"input": true
+			}
 		}
 	}
 }

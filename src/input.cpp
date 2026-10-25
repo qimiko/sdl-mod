@@ -184,6 +184,8 @@ void on_wheel_event(SDL_MouseWheelEvent& event) {
 	auto flip_wheel = true;
 
 	float x = flip_wheel ? -event.x : event.x;
+	x *= SDLManager::get().m_horizontalScrollSpeed;
+
 	float y = flip_wheel ? -event.y : event.y;
 
 	Loader::get()->queueInMainThread([x, y] {
