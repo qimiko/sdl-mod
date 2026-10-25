@@ -48,6 +48,8 @@ void dispatch_mouse_input_event(MouseInputData::Button event_button, bool down, 
 			} else {
 				cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleTouchesEnd(1, &mouse_id, &point.x, &point.y, data.timestamp);
 			}
+		} else if (data.button == MouseInputData::Button::Right && data.action == MouseInputData::Action::Press) {
+			cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleRightClick(point.x, point.y);
 		}
 	});
 }
@@ -81,6 +83,9 @@ void on_mouse_move(SDL_MouseMotionEvent& event) {
 	bool is_left = (event.state & SDL_BUTTON_LEFT) != 0;
 	auto mouse_id = static_cast<int>(event.which);
 	auto timestamp = translate_timestamp(event.timestamp);
+
+	SDLManager::get().m_cursorX = point.x;
+	SDLManager::get().m_cursorY = point.y;
 
 	Loader::get()->queueInMainThread([point, mouse_id, is_left, timestamp] mutable {
 		if (MouseMoveEvent().send(point.x, point.y) != ListenerResult::Propagate) return;

@@ -1,7 +1,7 @@
 {
-	"geode": "5.10.1",
+	"geode": "5.11.2",
 	"gd": {
-		"mac": "2.2081"
+		"mac": "2.2091"
 	},
 	"id": "zmx.sdl",
 	"name": "SDL Mod",

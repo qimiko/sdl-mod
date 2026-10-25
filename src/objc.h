@@ -126,4 +126,6 @@
 -(float) getBackingFactor;
 -(void) setBackingFactor:(float)f;
 
+-(CGPoint) mousePositionInFrame;
+
 @end
