@@ -126,16 +126,45 @@ void on_key_event(SDL_KeyboardEvent& event) {
 	);
 
 	Loader::get()->queueInMainThread([data = std::move(data), fullKeyCode] mutable {
+		auto imeDispatcher = CCIMEDispatcher::sharedDispatcher();
+		auto keyCode = data.key;
+		auto modifiers = data.modifiers;
+		auto isDown = data.action != KeyboardInputData::Action::Release;
+
+		if (isDown) {
+			if (keyCode == KEY_Backspace) {
+				imeDispatcher->dispatchDeleteBackward();
+			} else if (keyCode == KEY_Delete) {
+				imeDispatcher->dispatchDeleteForward();
+			} else if (keyCode == KEY_V && (modifiers & KeyboardModifier::Super) != KeyboardModifier::None) {
+				auto str = geode::utils::clipboard::read();
+				imeDispatcher->dispatchInsertText(str.data(), str.size(), keyCode);
+			} else if (keyCode == KEY_Escape) {
+				auto window = SDLManager::get().m_window;
+				if (SDL_TextInputActive(window)) {
+					SDL_StopTextInput(window);
+				}
+			} else {
+				auto isArrowKey = keyCode == KEY_Left || keyCode == KEY_Right;
+				if (isArrowKey) {
+					auto ch = 'a';
+					imeDispatcher->dispatchInsertText(&ch, 1, keyCode);
+				} else if (fullKeyCode != SDLK_UNKNOWN && !SDL_TextInputActive(SDLManager::get().m_window)) {
+					char outputBuf[4];
+					auto end = SDL_UCS4ToUTF8(fullKeyCode, outputBuf);
+					std::string_view toSend{outputBuf, end};
+
+					imeDispatcher->dispatchInsertText(toSend.data(), toSend.size(), keyCode);
+				}
+			}
+		}
+
 		if (KeyboardInputEvent(data.key).send(data) != ListenerResult::Propagate) return;
 
-		auto imeDispatcher = CCIMEDispatcher::sharedDispatcher();
 		auto keyboardDispatcher = CCKeyboardDispatcher::get();
 
 		auto timestamp = data.timestamp;
-		auto isDown = data.action != KeyboardInputData::Action::Release;
 		auto isRepeat = data.action == KeyboardInputData::Action::Repeat;
-		auto keyCode = data.key;
-		auto modifiers = data.modifiers;
 
 		if (keyCode != KEY_Unknown && (!imeDispatcher->hasDelegate() || keyCode == KEY_Escape || keyCode == KEY_Enter)) {
 			keyboardDispatcher->dispatchKeyboardMSG(keyCode, isDown, isRepeat, timestamp);
@@ -147,34 +176,6 @@ void on_key_event(SDL_KeyboardEvent& event) {
 			modifiers & KeyboardModifier::Alt,
 			modifiers & KeyboardModifier::Super
 		);
-
-		if (data.action != KeyboardInputData::Action::Press && data.action != KeyboardInputData::Action::Repeat) return;
-
-		if (keyCode == KEY_Backspace) {
-			imeDispatcher->dispatchDeleteBackward();
-		} else if (keyCode == KEY_Delete) {
-			imeDispatcher->dispatchDeleteForward();
-		} else if (keyCode == KEY_V && (modifiers & KeyboardModifier::Super) != KeyboardModifier::None) {
-			auto str = geode::utils::clipboard::read();
-			imeDispatcher->dispatchInsertText(str.data(), str.size(), keyCode);
-		} else if (keyCode == KEY_Escape) {
-			auto window = SDLManager::get().m_window;
-			if (SDL_TextInputActive(window)) {
-				SDL_StopTextInput(window);
-			}
-		} else {
-			auto isArrowKey = keyCode == KEY_Left || keyCode == KEY_Right;
-			if (isArrowKey) {
-				auto ch = 'a';
-				imeDispatcher->dispatchInsertText(&ch, 1, keyCode);
-			} else if (fullKeyCode != SDLK_UNKNOWN && !SDL_TextInputActive(SDLManager::get().m_window)) {
-				char outputBuf[4];
-				auto end = SDL_UCS4ToUTF8(fullKeyCode, outputBuf);
-				std::string_view toSend{outputBuf, end};
-
-				imeDispatcher->dispatchInsertText(toSend.data(), toSend.size(), keyCode);
-			}
-		}
 	});
 }
 
