@@ -208,6 +208,19 @@ static MetalGLView* s_metalGLView;
 	self->backingScaleFactor_ = f;
 }
 
+-(CGPoint) mousePositionInFrame {
+	return {SDLManager::get().m_cursorX, SDLManager::get().m_cursorY};
+}
+
+-(NSWindow*) window {
+	auto window = SDLManager::get().m_window;
+	return reinterpret_cast<NSWindow*>(SDL_GetPointerProperty(
+		SDL_GetWindowProperties(window),
+		SDL_PROP_WINDOW_COCOA_WINDOW_POINTER,
+		nullptr
+	));
+}
+
 @end
 
 static id s_sharedMetalDirectorCaller;

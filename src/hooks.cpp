@@ -136,8 +136,8 @@ void enableLockCursor() {
 }
 
 struct $modify(PlayLayer) {
-	bool init(GJGameLevel* level, bool p1, bool p2) {
-		if (!PlayLayer::init(level, p1, p2)) {
+	bool init(GJGameLevel* level, bool p1) {
+		if (!PlayLayer::init(level, p1)) {
 			return false;
 		}
 

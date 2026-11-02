@@ -226,6 +226,7 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 	SDLManager::get().m_keyInsteadOfScan = geode::Mod::get()->getSettingValue<bool>("key-instead-of-scan");
 
 	SDLManager::get().m_mouseControlsDeadzone = geode::Mod::get()->getSettingValue<float>("mouse-controller-deadzone");
+	SDLManager::get().m_horizontalScrollSpeed = geode::Mod::get()->getSettingValue<float>("horizontal-scroll-speed");
 
 	if (!unlockAspectRatio) {
 		auto targetAspect = gameResolution.width / gameResolution.height;
@@ -237,14 +238,21 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 		SDL_SetHint(SDL_HINT_MAIN_CALLBACK_RATE, str.c_str());
 	}
 
+	int window_w, window_h;
 	if (fullScreen) {
 		SDL_SetWindowFullscreen(window, true);
+
+		// we will set our initial frame based on what might be, instead of what it is now
+		// (auto texture quality depends on it)
+		auto mode = SDL_GetCurrentDisplayMode(SDL_GetPrimaryDisplay());
+
+		window_w = mode->w;
+		window_h = mode->h;
+	} else {
+		SDL_GetWindowSizeInPixels(window, &window_w, &window_h);
 	}
 
 	update_display_scale();
-
-	int window_w, window_h;
-	SDL_GetWindowSizeInPixels(window, &window_w, &window_h);
 
 	cocos2d::CCEGLView::sharedOpenGLView()->setFrameSize(window_w, window_h);
 
@@ -379,6 +387,10 @@ $execute {
 
 	geode::listenForSettingChanges<float>("mouse-controller-deadzone", [](float value) {
 		SDLManager::get().m_mouseControlsDeadzone = value;
+	});
+
+	geode::listenForSettingChanges<float>("horizontal-scroll-speed", [](float value) {
+		SDLManager::get().m_horizontalScrollSpeed = value;
 	});
 
 	geode::GameEvent(geode::GameEventType::Exiting).listen([] {

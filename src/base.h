@@ -30,7 +30,11 @@ public:
 	bool m_mouseDown = false;
 	bool m_backDown = false;
 
+	float m_cursorX = 0.0f;
+	float m_cursorY = 0.0f;
+
 	float m_mouseControlsDeadzone = 0.05f;
+	float m_horizontalScrollSpeed = 1.0f;
 
 	bool m_pauseOnFocusLoss = false;
 
