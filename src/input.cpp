@@ -145,7 +145,7 @@ void on_key_event(SDL_KeyboardEvent& event) {
 					SDL_StopTextInput(window);
 				}
 			} else {
-				auto isArrowKey = keyCode == KEY_Left || keyCode == KEY_Right;
+				auto isArrowKey = keyCode == KEY_Left || keyCode == KEY_Right || keyCode == KEY_Up || keyCode == KEY_Down;
 				if (isArrowKey) {
 					auto ch = 'a';
 					imeDispatcher->dispatchInsertText(&ch, 1, keyCode);
