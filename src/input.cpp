@@ -136,7 +136,7 @@ void on_mouse_move(SDL_MouseMotionEvent& event) {
 	SDLManager::get().m_cursorY = point.y;
 
 	Loader::get()->queueInMainThread([point, mouse_id, is_left, timestamp] mutable {
-		if (MouseMoveEvent().send(point.x, point.y) != ListenerResult::Propagate) return;
+		if (MouseMoveEvent().send(point.x, SDLManager::get().m_windowHeight - point.y) != ListenerResult::Propagate) return;
 
 		if (is_left) {
 			cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleTouchesMove(1, &mouse_id, &point.x, &point.y, timestamp);
@@ -488,6 +488,9 @@ bool sdl_on_event(void* appstate, SDL_Event* event) {
 			break;
 		}
 		case SDL_EVENT_WINDOW_RESIZED:
+			appManager->m_windowWidth = event->window.data1;
+			appManager->m_windowHeight = event->window.data2;
+
 			if constexpr (SDLManager::s_cocosHandlesScaling) {
 				handle_resize(event->window);
 			}
