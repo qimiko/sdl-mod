@@ -221,6 +221,14 @@ static MetalGLView* s_metalGLView;
 	));
 }
 
+-(int) getWidth {
+	return SDLManager::get().m_windowWidth;
+}
+
+-(int) getHeight {
+	return SDLManager::get().m_windowHeight;
+}
+
 @end
 
 static id s_sharedMetalDirectorCaller;
