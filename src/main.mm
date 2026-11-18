@@ -25,6 +25,10 @@ void update_platform_scale(float scale) {
 	[[MetalGLView sharedEGLView] setBackingFactor:scale];
 }
 
+void update_platform_cursor_pos(float x, float y) {
+	[[MetalGLView sharedEGLView] setCursorX:x Y:y];
+}
+
 std::uint64_t get_platform_time_ns() {
 	return clock_gettime_nsec_np(CLOCK_UPTIME_RAW);
 }
@@ -208,8 +212,14 @@ static MetalGLView* s_metalGLView;
 	self->backingScaleFactor_ = f;
 }
 
+-(void) setCursorX:(float)x Y:(float)y {
+	self->_mouseX = x;
+	self->_mouseY = y;
+}
+
 -(CGPoint) mousePositionInFrame {
-	return {SDLManager::get().m_cursorX, SDLManager::get().m_cursorY};
+	auto point = translate_display_point(ccp(self->_mouseX, self->_mouseY));
+	return {point.x, point.y};
 }
 
 -(NSWindow*) window {
