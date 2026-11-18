@@ -164,7 +164,8 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 		return SDL_APP_FAILURE;
 	}
 	SDLManager::get().m_window = window;
-	SDL_GetWindowSize(window, &SDLManager::get().m_windowWidth, &SDLManager::get().m_windowHeight);
+	SDL_GetWindowSizeInPixels(window, &SDLManager::get().m_pixelWidth, &SDLManager::get().m_pixelHeight);
+	SDL_GetWindowSize(window, &SDLManager::get().m_pointWidth, &SDLManager::get().m_pointHeight);
 
 	platform_fixes();
 	fix_relative_timer();

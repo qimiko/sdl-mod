@@ -12,8 +12,10 @@ public:
 	static constexpr bool s_cocosHandlesScaling = false;
 
 	SDL_Window* m_window = nullptr;
-	int m_windowWidth = 0;
-	int m_windowHeight = 0;
+	int m_pixelWidth = 0;
+	int m_pixelHeight = 0;
+	int m_pointWidth = 0;
+	int m_pointHeight = 0;
 	bool m_stopped = false;
 	bool m_closeAfterSave = false;
 	std::uint64_t m_timeDiff = 0;

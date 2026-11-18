@@ -222,11 +222,11 @@ static MetalGLView* s_metalGLView;
 }
 
 -(int) getWidth {
-	return SDLManager::get().m_windowWidth;
+	return SDLManager::get().m_pointWidth;
 }
 
 -(int) getHeight {
-	return SDLManager::get().m_windowHeight;
+	return SDLManager::get().m_pointHeight;
 }
 
 @end
