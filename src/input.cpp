@@ -122,6 +122,10 @@ void on_mouse_input(SDL_MouseButtonEvent& event) {
 }
 
 void on_mouse_move(SDL_MouseMotionEvent& event) {
+	if (event.which == SDL_TOUCH_MOUSEID) {
+		return;
+	}
+
 	auto point = translate_display_point({event.x, event.y});
 
 	bool is_left = (event.state & SDL_BUTTON_LEFT) != 0;
