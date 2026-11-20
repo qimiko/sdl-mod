@@ -6,7 +6,7 @@
 bool sdl_on_event(void* appstate, SDL_Event* event);
 
 void update_mouse_position();
-cocos2d::CCPoint translate_display_point(cocos2d::CCPoint const& pos);
+cocos2d::CCPoint translate_display_point(const cocos2d::CCPoint pos);
 void perform_sdl_runapp();
 void update_display_scale();
 void resize_window(int w, int h);

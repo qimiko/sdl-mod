@@ -16,7 +16,7 @@ double translate_timestamp(std::uint64_t x) {
 	return relativeTime/1'000'000'000.0;
 }
 
-cocos2d::CCPoint translate_display_point(cocos2d::CCPoint const& pos) {
+cocos2d::CCPoint translate_display_point(const cocos2d::CCPoint pos) {
 	auto display_scale = 1.0f;
 	if constexpr (!SDLManager::s_cocosHandlesScaling) {
 		display_scale = SDLManager::get().m_displayScale;
