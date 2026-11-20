@@ -95,6 +95,10 @@ void dispatch_mouse_input_event(MouseInputData::Button event_button, bool down, 
 }
 
 void on_mouse_input(SDL_MouseButtonEvent& event) {
+	if (event.which == SDL_TOUCH_MOUSEID) {
+		return;
+	}
+
 	auto event_button = MouseInputData::Button::Left;
 	switch (event.button) {
 		case SDL_BUTTON_RIGHT:
@@ -398,6 +402,38 @@ void handle_resize(SDL_WindowEvent& event) {
 	});
 }
 
+void on_touch_input(SDL_TouchFingerEvent& event) {
+	auto timestamp = translate_timestamp(event.timestamp);
+
+	int window_w, window_h;
+	SDL_GetWindowSize(SDLManager::get().m_window, &window_w, &window_h);
+
+	auto type = event.type;
+	auto point = translate_display_point({event.x * window_w, event.y * window_h});
+
+	auto finger = static_cast<int>(event.fingerID);
+
+	Loader::get()->queueInMainThread([timestamp, type, point, finger] mutable {
+    auto glView = cocos2d::CCDirector::sharedDirector()->getOpenGLView();
+		switch (type) {
+			case SDL_EVENT_FINGER_DOWN:
+				glView->handleTouchesBegin(1, &finger, &point.x, &point.y, timestamp);
+				break;
+			case SDL_EVENT_FINGER_UP:
+				glView->handleTouchesEnd(1, &finger, &point.x, &point.y, timestamp);
+				break;
+			case SDL_EVENT_FINGER_MOTION:
+				glView->handleTouchesMove(1, &finger, &point.x, &point.y, timestamp);
+				break;
+			case SDL_EVENT_FINGER_CANCELED:
+				glView->handleTouchesCancel(1, &finger, &point.x, &point.y, timestamp);
+				break;
+			default:
+				break;
+		}
+	});
+}
+
 bool sdl_on_event(void* appstate, SDL_Event* event) {
 	auto appManager = reinterpret_cast<SDLManager*>(appstate);
 
@@ -505,6 +541,12 @@ bool sdl_on_event(void* appstate, SDL_Event* event) {
 				// otherwise always calling is fine i think, and safer in case someone disables the option while paused
 				AppDelegate::get()->applicationWillBecomeActive();
 			});
+			break;
+		case SDL_EVENT_FINGER_DOWN:
+		case SDL_EVENT_FINGER_UP:
+		case SDL_EVENT_FINGER_MOTION:
+		case SDL_EVENT_FINGER_CANCELED:
+			on_touch_input(event->tfinger);
 			break;
 		/*
 		case SDL_EVENT_TEXT_EDITING:
