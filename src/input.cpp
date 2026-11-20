@@ -42,14 +42,54 @@ void dispatch_mouse_input_event(MouseInputData::Button event_button, bool down, 
 	Loader::get()->queueInMainThread([data = std::move(data), mouse_id, point] mutable {
 		if (MouseInputEvent().send(data) != ListenerResult::Propagate) return;
 
-		if (data.button == MouseInputData::Button::Left) {
-			if (data.action == MouseInputData::Action::Press) {
-				cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleTouchesBegin(1, &mouse_id, &point.x, &point.y, data.timestamp);
-			} else {
-				cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleTouchesEnd(1, &mouse_id, &point.x, &point.y, data.timestamp);
+		switch (data.button) {
+			case MouseInputData::Button::Left:
+				if (data.action == MouseInputData::Action::Press) {
+					cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleTouchesBegin(1, &mouse_id, &point.x, &point.y, data.timestamp);
+				} else {
+					cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleTouchesEnd(1, &mouse_id, &point.x, &point.y, data.timestamp);
+				}
+				break;
+			case MouseInputData::Button::Right:
+				if (data.action == MouseInputData::Action::Press) {
+					cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleRightClick(point.x, point.y);
+				}
+				break;
+			case MouseInputData::Button::Button4:
+			case MouseInputData::Button::Button5: {
+				auto keyCode = cocos2d::KEY_Unknown;
+				switch (data.button) {
+					case MouseInputData::Button::Button4:
+						keyCode = cocos2d::MOUSE_4;
+						break;
+					case MouseInputData::Button::Button5:
+						keyCode = cocos2d::MOUSE_5;
+						break;
+					default:
+						break;
+				}
+
+				auto imeDispatcher = CCIMEDispatcher::sharedDispatcher();
+				auto keyboardDispatcher = CCKeyboardDispatcher::get();
+
+				auto timestamp = data.timestamp;
+				auto isDown = data.action == MouseInputData::Action::Press;
+				auto modifiers = get_current_modifiers();
+
+				keyboardDispatcher->updateModifierKeys(
+					modifiers & KeyboardModifier::Shift,
+					modifiers & KeyboardModifier::Control,
+					modifiers & KeyboardModifier::Alt,
+					modifiers & KeyboardModifier::Super
+				);
+
+				if (!imeDispatcher->hasDelegate()) {
+					keyboardDispatcher->dispatchKeyboardMSG(keyCode, isDown, false, timestamp);
+				}
+
+				break;
 			}
-		} else if (data.button == MouseInputData::Button::Right && data.action == MouseInputData::Action::Press) {
-			cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleRightClick(point.x, point.y);
+			default: break;
 		}
 	});
 }
@@ -166,16 +206,16 @@ void on_key_event(SDL_KeyboardEvent& event) {
 		auto timestamp = data.timestamp;
 		auto isRepeat = data.action == KeyboardInputData::Action::Repeat;
 
-		if (keyCode != KEY_Unknown && (!imeDispatcher->hasDelegate() || keyCode == KEY_Escape || keyCode == KEY_Enter)) {
-			keyboardDispatcher->dispatchKeyboardMSG(keyCode, isDown, isRepeat, timestamp);
-		}
-
 		keyboardDispatcher->updateModifierKeys(
 			modifiers & KeyboardModifier::Shift,
 			modifiers & KeyboardModifier::Control,
 			modifiers & KeyboardModifier::Alt,
 			modifiers & KeyboardModifier::Super
 		);
+
+		if (keyCode != KEY_Unknown && (!imeDispatcher->hasDelegate() || keyCode == KEY_Escape || keyCode == KEY_Enter)) {
+			keyboardDispatcher->dispatchKeyboardMSG(keyCode, isDown, isRepeat, timestamp);
+		}
 	});
 }
 
@@ -221,16 +261,16 @@ void dispatch_keypad_event(double timestamp, cocos2d::enumKeyCodes keyCode, bool
 		auto keyCode = data.key;
 		auto modifiers = data.modifiers;
 
-		if (keyCode != KEY_Unknown && (!imeDispatcher->hasDelegate() || keyCode == KEY_Escape || keyCode == KEY_Enter)) {
-			keyboardDispatcher->dispatchKeyboardMSG(keyCode, isDown, isRepeat, timestamp);
-		}
-
 		keyboardDispatcher->updateModifierKeys(
 			modifiers & KeyboardModifier::Shift,
 			modifiers & KeyboardModifier::Control,
 			modifiers & KeyboardModifier::Alt,
 			modifiers & KeyboardModifier::Super
 		);
+
+		if (keyCode != KEY_Unknown && (!imeDispatcher->hasDelegate() || keyCode == KEY_Escape || keyCode == KEY_Enter)) {
+			keyboardDispatcher->dispatchKeyboardMSG(keyCode, isDown, isRepeat, timestamp);
+		}
 	});
 }
 
