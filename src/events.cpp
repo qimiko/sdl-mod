@@ -252,6 +252,9 @@ SDL_AppResult SDLCALL my_init_callback(void **appstate, int argc, char *argv[]) 
 		SDL_GetWindowSizeInPixels(window, &window_w, &window_h);
 	}
 
+	SDL_GetWindowSizeInPixels(window, &SDLManager::get().m_pixelWidth, &SDLManager::get().m_pixelHeight);
+	SDL_GetWindowSize(window, &SDLManager::get().m_pointWidth, &SDLManager::get().m_pointHeight);
+
 	update_display_scale();
 
 	cocos2d::CCEGLView::sharedOpenGLView()->setFrameSize(window_w, window_h);

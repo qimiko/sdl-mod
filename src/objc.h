@@ -101,6 +101,9 @@
 	id<MacEventDelegate> eventDelegate_;
 
 	float backingScaleFactor_;
+
+	float _mouseX;
+	float _mouseY;
 }
 
 @property (nonatomic, readwrite, assign) id<MacEventDelegate> eventDelegate;
@@ -126,6 +129,7 @@
 -(float) getBackingFactor;
 -(void) setBackingFactor:(float)f;
 
+-(void) setCursorX:(float)x Y:(float)y;
 -(CGPoint) mousePositionInFrame;
 
 @end

@@ -16,13 +16,13 @@ double translate_timestamp(std::uint64_t x) {
 	return relativeTime/1'000'000'000.0;
 }
 
-cocos2d::CCPoint translate_display_point(const cocos2d::CCPoint x) {
+cocos2d::CCPoint translate_display_point(const cocos2d::CCPoint pos) {
 	auto display_scale = 1.0f;
 	if constexpr (!SDLManager::s_cocosHandlesScaling) {
 		display_scale = SDLManager::get().m_displayScale;
 	}
 
-	return x * display_scale;
+	return pos * display_scale;
 }
 
 void dispatch_mouse_input_event(MouseInputData::Button event_button, bool down, double timestamp, int mouse_id, cocos2d::CCPoint base_point) {
@@ -132,11 +132,10 @@ void on_mouse_move(SDL_MouseMotionEvent& event) {
 	auto mouse_id = static_cast<int>(event.which);
 	auto timestamp = translate_timestamp(event.timestamp);
 
-	SDLManager::get().m_cursorX = point.x;
-	SDLManager::get().m_cursorY = point.y;
+	update_platform_cursor_pos(event.x, event.y);
 
 	Loader::get()->queueInMainThread([point, mouse_id, is_left, timestamp] mutable {
-		if (MouseMoveEvent().send(point.x, point.y) != ListenerResult::Propagate) return;
+		if (MouseMoveEvent().send(point.x, SDLManager::get().m_pixelHeight - point.y) != ListenerResult::Propagate) return;
 
 		if (is_left) {
 			cocos2d::CCDirector::sharedDirector()->m_pobOpenGLView->handleTouchesMove(1, &mouse_id, &point.x, &point.y, timestamp);
@@ -488,11 +487,17 @@ bool sdl_on_event(void* appstate, SDL_Event* event) {
 			break;
 		}
 		case SDL_EVENT_WINDOW_RESIZED:
+			appManager->m_pointWidth = event->window.data1;
+			appManager->m_pointHeight = event->window.data2;
+
 			if constexpr (SDLManager::s_cocosHandlesScaling) {
 				handle_resize(event->window);
 			}
 			break;
 		case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+			appManager->m_pixelWidth = event->window.data1;
+			appManager->m_pixelHeight = event->window.data2;
+
 			if constexpr (!SDLManager::s_cocosHandlesScaling) {
 				handle_resize(event->window);
 			}

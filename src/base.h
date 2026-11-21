@@ -12,6 +12,10 @@ public:
 	static constexpr bool s_cocosHandlesScaling = false;
 
 	SDL_Window* m_window = nullptr;
+	int m_pixelWidth = 0;
+	int m_pixelHeight = 0;
+	int m_pointWidth = 0;
+	int m_pointHeight = 0;
 	bool m_stopped = false;
 	bool m_closeAfterSave = false;
 	std::uint64_t m_timeDiff = 0;
@@ -29,9 +33,6 @@ public:
 	float m_scrollHorizontal = 0.0f;
 	bool m_mouseDown = false;
 	bool m_backDown = false;
-
-	float m_cursorX = 0.0f;
-	float m_cursorY = 0.0f;
 
 	float m_mouseControlsDeadzone = 0.05f;
 	float m_horizontalScrollSpeed = 1.0f;
