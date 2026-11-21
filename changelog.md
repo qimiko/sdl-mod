@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.1.0
+
+- Added support for 2.209
+- Fixed keybinds for side mouse buttons
+- Fixed multiline text inputs not supporting up/down keys
+- Added option to change the horizontal scroll multiplier
+- Fixed support for geode's `setMousePos` (thanks Absolute!)
+- Update SDL to 3.4.20
+
 ## v1.0.6
 
 - Fixed resolutions list in the graphics options only allowing up to the game window's size

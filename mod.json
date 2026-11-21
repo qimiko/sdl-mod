@@ -1,11 +1,11 @@
 {
-	"geode": "6.0.0-alpha.3",
+	"geode": "6.0.0-beta.1",
 	"gd": {
 		"mac": "2.2091"
 	},
 	"id": "zmx.sdl",
 	"name": "SDL Mod",
-	"version": "v1.0.6",
+	"version": "v1.1.0",
 	"developer": "zmx",
 	"description": "Full rewrite of the windowing layer on macOS",
 	"early-load": true,

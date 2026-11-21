@@ -10,7 +10,7 @@ Evil mod that replaces the windowing backend on macOS with SDL. For some reason,
 - Improved resolution on Retina devices
 - Fixed display cutout issues in fullscreen
 - Slightly more accurate colors
-- (Partial) Controller support
+- Improved input handling, including controller support
 
 The mod settings also has options like FPS bypass and free resize.
 
