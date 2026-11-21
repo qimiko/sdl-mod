@@ -2,11 +2,11 @@
 
 ## v1.1.0
 
-- Added support for 2.209
+- Added support for 2.209 and Geode v6
 - Fixed keybinds for side mouse buttons
 - Fixed multiline text inputs not supporting up/down keys
 - Added option to change the horizontal scroll multiplier
-- Fixed support for geode's `setMousePos` (thanks Absolute!)
+- Fixed support for Geode's `setMousePos` (thanks Absolute!)
 - Update SDL to 3.4.20
 
 ## v1.0.6
